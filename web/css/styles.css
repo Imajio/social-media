@@ -1,0 +1,129 @@
+
+:root {
+    --aside-color: #212121;
+    --text-color: #fff;
+    --pretext-color: #707579;
+    --links-color: #0000ff;
+    --border-shadow-color: #7d6659;
+    --search-bar-border-color: #2f2f2f;
+    --search-bar-background-color: #181818;
+    --search-bar-hover-border-color: #656A6D;
+    --caret-color: #8774e1;
+    --font-regular: "Roboto", -apple-system, apple color emoji, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --font-monospace: "Roboto Mono", monospace;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: 0;
+    scrollbar-width: 0;
+    scroll-behavior: smooth;
+    caret-color: transparent;
+}
+
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -99;
+    background-image: url("../media/c0a13a19-2add-404e-b89d-769117f16801.webp");
+    background-repeat: no-repeat;
+}
+
+.hero {
+    width: 100%;
+    height: 100vh;
+}
+
+.chats {
+    width: 424px;
+    height: 100%;
+    background-color: var(--aside-color);
+    box-shadow: 0 0 1000px var(--border-shadow-color),
+                0 0 1000px var(--border-shadow-color),
+                0 0 1000px var(--border-shadow-color);
+    z-index: 20;
+    transition: .3s;
+}
+
+.chats .header {
+    width: 424px;
+    height: 56px;
+    display: inline-flex;
+    justify-content: space-evenly;
+    align-items: center;
+    transition: inherit;
+}
+
+.menu {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--search-bar-background-color);
+    border-radius: 22px;
+    position: relative;
+    left: 10px;
+}
+
+.search-bar {
+    width: 338px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    transition: inherit;
+}
+
+.search-bar input {
+    width: 338px;
+    height: 42px;
+    background-color: var(--search-bar-background-color);
+    border-radius: 22px;
+    border: 0.5px solid var(--search-bar-border-color);
+    font-size: 17px;
+    z-index: 30;
+    font-family: var(--font-regular);
+    font-weight: bold;
+    letter-spacing: 0.1px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    color: var(--pretext-color);
+    padding: 0 44px;
+    transition: .11s;
+}
+
+.search-bar button {
+    width: 18px;
+    height: 18px;
+    z-index: 31;
+    transition: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    position: relative;
+    left: 35px;
+}
+
+.search-bar button img {
+    width: 18px;
+    height: 18px;
+}
+
+.search-bar input:hover {
+    border: 2px solid var(--search-bar-hover-border-color);
+    padding: 0 43px;
+}
+
+.search-bar input:focus  {
+    padding: 0 43px;
+    border: 2px solid var(--caret-color);
+    outline: none;
+}
