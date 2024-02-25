@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>|Shkaf Web|</title>
+    <link rel="stylesheet" href="../css/chat.css">
+    <link rel="icon" type="image/x-icon" href="../media/telegram.png">
+</head>
+<body>
+    <div src="../media/c0a13a19-2add-404e-b89d-769117f16801.webp" class="background"></div>
+    <!-- Main -->
+    <div class="hero">
+        <!-- Block with chats -->
+        <aside class="chats">
+            <!-- Header of chats -->
+            <div class="header">
+                <!-- Menu -->
+                <div class="menu">
+                    
+                </div>
+                <!-- search bar -->
+                <form class="search-bar">
+                    <button><img src="../media/search.png"></button>
+                    <input type="search" placeholder="Search">
+                </form>
+            </div>
+        </aside>
+    </div>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyA3S04Q2YsJCCH24Pt8N6ocsJE7dDtBz_E",
+          authDomain: "shkaf-d50bf.firebaseapp.com",
+          projectId: "shkaf-d50bf",
+          storageBucket: "shkaf-d50bf.appspot.com",
+          messagingSenderId: "101502181839",
+          appId: "1:101502181839:web:eb4e68d285286a52dfb2ba",
+          measurementId: "G-S47WX4CJFY"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+      </script>
+    <script src="../js/chat.js"></script>
+</body>
+</html>
