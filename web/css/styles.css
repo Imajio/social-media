@@ -1,5 +1,17 @@
 
 :root {
+    --grid-offset: calc(50% + 80px);
+    --color: rgb(255,255,255);
+    --bg-size: 180px;
+    --button-shade: 30%;
+    --glint: rgb(0,0,0);
+    --grid-accent: rgba(204, 204, 204, 0.1);;
+    --selection: rgb(51, 51, 51);
+    --color: rgb(250, 250, 250);
+    --bg: #000;
+    --color-alpha: rgb(128, 128, 128);;
+    --grid-line: rgb(31, 31, 31);;
+    --input-bg: rgba(0, 0, 0, 0.2);
     --aside-color: #212121;
     --text-color: #fff;
     --pretext-color: #707579;
@@ -13,6 +25,11 @@
     --font-monospace: "Roboto Mono", monospace;
 }
 
+
+@font-face {
+    font-family: "Geist Mono";
+    src: url("https://assets.codepen.io/605876/GeistMonoVariableVF.ttf") format("truetype");
+}
 
 * {
     margin: 0;
@@ -31,99 +48,119 @@
     width: 100%;
     height: 100vh;
     z-index: -99;
-    background-image: url("../media/c0a13a19-2add-404e-b89d-769117f16801.webp");
+    background-image: url("../media/loginPageBg.webp");
     background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: 0% 50%;
 }
 
 .hero {
-    width: 100%;
+    background-image: linear-gradient(rgba(2,2,2,0.3),rgba(2,2,2,0.3));
+    display: grid;
+    place-items: center;
     height: 100vh;
+    width: 100%;
+    font-family: 'Geist Mono', sans-serif, system-ui;
+    color: var(--color);
 }
 
-.chats {
-    width: 424px;
-    height: 100%;
-    background-color: var(--aside-color);
-    box-shadow: 0 0 1000px var(--border-shadow-color),
-                0 0 1000px var(--border-shadow-color),
-                0 0 1000px var(--border-shadow-color);
-    z-index: 20;
-    transition: .3s;
+.hero::before {
+    content: "";
+    transition: background 0.2s;
+
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    width: 100vw;
+    -webkit-mask: radial-gradient(circle at 0% 0%, hsl(0 0% 100% / 0.5), transparent);
 }
 
-.chats .header {
-    width: 424px;
-    height: 56px;
-    display: inline-flex;
-    justify-content: space-evenly;
-    align-items: center;
-    transition: inherit;
+.form-group:focus-within label {
+    color: var(--color);
 }
 
-.menu {
-    width: 42px;
-    height: 42px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--search-bar-background-color);
-    border-radius: 22px;
-    position: relative;
-    left: 10px;
+.form-group:focus-within input {
+    border-color: var(--color);
+    color: var(--color);
 }
 
-.search-bar {
-    width: 338px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    transition: inherit;
+.form-group:focus-within button {
+    color: var(--color);
 }
 
-.search-bar input {
-    width: 338px;
-    height: 42px;
-    background-color: var(--search-bar-background-color);
-    border-radius: 22px;
-    border: 0.5px solid var(--search-bar-border-color);
-    font-size: 17px;
-    z-index: 30;
-    font-family: var(--font-regular);
-    font-weight: bold;
-    letter-spacing: 0.1px;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    color: var(--pretext-color);
-    padding: 0 44px;
-    transition: .11s;
-}
-
-.search-bar button {
-    width: 18px;
-    height: 18px;
-    z-index: 31;
-    transition: inherit;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    position: relative;
-    left: 35px;
-}
-
-.search-bar button img {
-    width: 18px;
-    height: 18px;
-}
-
-.search-bar input:hover {
-    border: 2px solid var(--search-bar-hover-border-color);
-    padding: 0 43px;
-}
-
-.search-bar input:focus  {
-    padding: 0 43px;
-    border: 2px solid var(--caret-color);
+input {
+    z-index: 10;
+    font-family: "Geist Mono", monospace;
+    font-size: 1.75rem;
+    padding: 1rem 2rem;
+    padding-right: 4rem;
+    letter-spacing: 0.2ch;
+    border-radius: 6px;
+    color: var(--color-alpha);
+    border-color: var(--color-alpha);
+    border-style: solid;
+    background: var(--input-bg);
     outline: none;
+    transition: border-color 0.2s, color 0.2s
+}
+
+label {
+    position: absolute;
+    color: var(--color-alpha);
+    bottom: calc(100% + 0.5rem);
+    letter-spacing: 0.2ch;
+    transition: color 0.2s;
+}
+
+.form-group {
+    position: relative;
+}
+
+.eye circle:nth-of-type(2) {
+    fill: var(--glint);
+}
+
+button {
+    padding: 0;
+    display: grid;
+    place-items: center;
+    height: 100%;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: 0;
+    background: linear-gradient(hsl(0 0% var(--button-shade) / calc(var(--active, 0) * 0.5)), hsl(0 0% var(--button-shade) / calc(var(--active, 0) * 0.5))) padding-box;
+    border: 6px solid transparent;
+    transition: background 0.125s;
+    color: var(--color-alpha);
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    top: 50%;
+    cursor: pointer;
+    translate: 0 -50%;
+    outline: 0;
+}
+
+input::selection {
+    background: var(--selection);
+}
+
+button:is(:focus-visible, :hover) {
+    --active: 1;
+}
+
+button svg {
+    width: 75%;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }
