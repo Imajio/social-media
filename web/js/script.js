@@ -1,3 +1,41 @@
+document.getElementById('myForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  var formData = new FormData(this);
+
+  fetch('http://localhost:8000/receiveData', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error HTTP: ' + response.status);
+    }
+    console.log('Data was succesful sended to backend');
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Beautiful Effects, and all/////////////////////////////////////////////////////////////////////////////////////////////
 gsap.registerPlugin(ScrambleTextPlugin, MorphSVGPlugin);
 
 const BLINK_SPEED = 0.075;
@@ -154,3 +192,5 @@ TOGGLE.addEventListener('click', () => {
 
 const FORM = document.querySelector('form');
 FORM.addEventListener('submit', event => event.preventDefault());
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

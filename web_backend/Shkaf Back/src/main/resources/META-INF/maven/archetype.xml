@@ -1,0 +1,9 @@
+<archetype>
+  <id>Shkaf_Back</id>
+  <sources>
+    <source>src/main/java/org.bytebound.App.java</source>
+  </sources>
+  <testSources>
+    <source>src/test/java/AppTest.java</source>
+  </testSources>
+</archetype>
