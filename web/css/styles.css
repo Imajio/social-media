@@ -95,7 +95,7 @@ form div {
 
 .login-group::target-text
 
-.login-group:hover label {
+.login-group:hover p {
     color: var(--color);
 }
 
@@ -108,7 +108,7 @@ form div {
     color: var(--color);
 }
 
-.login-group:focus-within label {
+.login-group:focus-within p {
     color: var(--color);
 }
 
@@ -121,7 +121,7 @@ form div {
     color: var(--color);
 }
 
-.form-group:hover label {
+.form-group:hover p {
     color: var(--color);
 }
 
@@ -134,7 +134,7 @@ form div {
     color: var(--color);
 }
 
-.form-group:focus-within label {
+.form-group:focus-within p {
     color: var(--color);
 }
 
@@ -166,7 +166,7 @@ input {
     height: 42px;
 }
 
-label {
+p{
     position: relative;
     color: var(--pretext-color);
     letter-spacing: 0.2ch;
