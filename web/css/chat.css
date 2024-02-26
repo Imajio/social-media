@@ -33,7 +33,7 @@
     z-index: -99;
     background-image: url("../media/c0a13a19-2add-404e-b89d-769117f16801.webp");
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: cover;
 }
 
 .hero {
