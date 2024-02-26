@@ -87,14 +87,6 @@ form div {
     
 }
 
-/* .login-group {
-    display: grid;
-    grid-template-rows: 28px 42px;
-    grid-template-columns: 652px 18px;
-} */
-
-.login-group::target-text
-
 .login-group:hover p {
     color: var(--color);
 }
@@ -152,7 +144,7 @@ input {
     font-family: "Geist Mono", monospace;
     font-size: 1.75rem;
     padding: 1rem 2rem;
-    padding-right: 4rem;
+    padding-right: 5rem;
     letter-spacing: 0.2ch;
     border-radius: 6px;
     color: var(--color-alpha);
@@ -163,6 +155,12 @@ input {
     outline: none;
     transition: border-color 0.2s, color 0.2s;
     width: 410px;
+    height: 42px;
+}
+
+.login-group input {
+    padding: 1rem 2rem;
+    width: 600px;
     height: 42px;
 }
 
@@ -186,8 +184,8 @@ button {
     padding: 0;
     display: grid;
     place-items: center;
-    height: 100%;
-    aspect-ratio: 1;
+    height: 42px;
+    width: 42px;
     border-radius: 12px;
     border: 0;
     background: linear-gradient(hsl(0 0% var(--button-shade) / calc(var(--active, 0) * 0.5)), hsl(0 0% var(--button-shade) / calc(var(--active, 0) * 0.5))) padding-box;
@@ -201,6 +199,7 @@ button {
     cursor: pointer;
     translate: 0 -50%;
     outline: 0;
+    top: 60%;
 }
 
 input::selection {
@@ -212,7 +211,7 @@ button:is(:focus-visible, :hover) {
 }
 
 button svg {
-    width: 75%;
+    width: 85%;
 }
 
 .sr-only {
