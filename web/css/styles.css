@@ -144,7 +144,6 @@ input {
     font-family: "Geist Mono", monospace;
     font-size: 1.75rem;
     padding: 1rem 2rem;
-    padding-right: 5rem;
     letter-spacing: 0.2ch;
     border-radius: 6px;
     color: var(--color-alpha);
@@ -156,6 +155,7 @@ input {
     transition: border-color 0.2s, color 0.2s;
     width: 410px;
     height: 42px;
+    margin-top: 10px;
 }
 
 .login-group input {
@@ -182,20 +182,19 @@ p{
 
 button {
     padding: 0;
-    display: grid;
-    place-items: center;
-    height: 42px;
-    width: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 84px;
+    width: 84px;
     border-radius: 12px;
-    border: 0;
+    position: absolute;
+    right: 20px;
     background: linear-gradient(hsl(0 0% var(--button-shade) / calc(var(--active, 0) * 0.5)), hsl(0 0% var(--button-shade) / calc(var(--active, 0) * 0.5))) padding-box;
     border: 6px solid transparent;
     transition: background 0.125s;
     color: var(--pretext-color);
-    position: absolute;
-    right: 0;
     z-index: 2;
-    top: 50%;
     cursor: pointer;
     translate: 0 -50%;
     outline: 0;
@@ -224,4 +223,33 @@ button svg {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
+}
+
+
+.submit-group input {
+    color: var(--pretext-color);
+    border-width: 2px;
+    border-color: var(--pretext-color);
+    border-style: solid;
+    background: var(--input-bg);
+    width: 200px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .125s;
+    padding: 0;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.submit-group input:hover {
+    color: var(--color);
+    border-color: var(--color);
+}
+
+.submit-group input:active {
+    color: var(--color);
+    border-color: var(--color);
 }
