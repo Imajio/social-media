@@ -1,7 +1,12 @@
 document.getElementById('myForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
-  var formData = new FormData(this);
+  let formData = new FormData(this);
+  let formLogin = document.querySelector("#login").value;
+  let formPassword = document.querySelector("#password").value;
+
+  formData.append('login', formLogin);
+  formData.append('password', formPassword);
 
   fetch('http://localhost:8000/receiveData', {
     method: 'POST',
@@ -11,12 +16,16 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
     if (!response.ok) {
       throw new Error('Error HTTP: ' + response.status);
     }
-    console.log('Data was succesful sended to backend');
+    return response.text(); // Возвращаем ответ сервера
+  })
+  .then(data => {
+    alert(data); // Показываем ответ сервера в модальном окне
   })
   .catch(error => {
     console.error('Error:', error);
   });
 });
+
 
 
 
