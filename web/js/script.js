@@ -19,7 +19,11 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
     return response.text(); // Возвращаем ответ сервера
   })
   .then(data => {
-    alert(data); // Показываем ответ сервера в модальном окне
+    if (data === "Success: Data received and matched!") {
+      window.location.href = "chat.html";
+    } else {
+      console.log("Error with redirect or received data");
+    }
   })
   .catch(error => {
     console.error('Error:', error);

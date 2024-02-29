@@ -11,6 +11,11 @@
     --caret-color: #8774e1;
     --font-regular: "Roboto", -apple-system, apple color emoji, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     --font-monospace: "Roboto Mono", monospace;
+    --bar-width: 25px;
+    --bar-height: 4px;
+    --hamburger-gap: 5px;
+    --hamburger-animation-time: .3s ease-in-out;
+    --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2);
 }
 
 
@@ -61,16 +66,57 @@
     transition: inherit;
 }
 
-.menu {
-    width: 42px;
-    height: 42px;
+.hamburger-menu::before,
+.hamburger-menu::after,
+.hamburger-menu input {
+    content: "";
+    width: var(--bar-width);
+    height: var(--bar-height);
+    background-color: white;
+    border-radius: 9999px;
+    transition: opacity var(--hamburger-animation-time), width var(--hamburger-animation-time),
+    rotate var(--hamburger-animation-time), translate var(--hamburger-animation-time);
+    transform-origin: left center;
+}
+
+.hamburger-menu {
+    --x-width: calc(var(--hamburger-height) * 1.41421356237);
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--search-bar-background-color);
-    border-radius: 22px;
+    flex-direction: column;
+    gap: var(--hamburger-gap);
+    width: max-content;
+    height: max-content;
     position: relative;
     left: 10px;
+    cursor: pointer;
+    z-index: 10;
+    position: relative;
+}
+
+.hamburger-menu input {
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    pointer-events: none;
+}
+
+.hamburger-menu input:checked {
+    opacity: 0;
+    width: 0;
+
+}
+
+.hamburger-menu:has(input:checked)::before {
+    rotate: 45deg;
+    width: var(--x-width);
+    translate: 0 calc(var(--bar-height) / -2);
+}
+
+.hamburger-menu:has(input:checked)::after {
+    rotate: -45deg;
+    width: var(--x-width);
+    translate: 0 calc(var(--bar-height) / 2);
 }
 
 .search-bar {
@@ -81,7 +127,7 @@
     transition: inherit;
 }
 
-.search-bar input {
+.search-bar #input {
     width: 338px;
     height: 42px;
     background-color: var(--search-bar-background-color);
@@ -98,6 +144,7 @@
     color: var(--pretext-color);
     padding: 0 44px;
     transition: .11s;
+    position: relative;
 }
 
 .search-bar button {
@@ -118,17 +165,17 @@
     height: 18px;
 }
 
-.search-bar input:hover {
+.search-bar #input:hover {
     border: 2px solid var(--search-bar-hover-border-color);
     outline: none;
 }
 
-.search-bar input:focus  {
+.search-bar #input:focus  {
     padding: 0 43px;
     border: 2px solid var(--caret-color);
     outline: none;
 }
 
-input[type="search"]::-webkit-search-cancel-button {
+#input[type="search"]::-webkit-search-cancel-button {
     display: none;
 }

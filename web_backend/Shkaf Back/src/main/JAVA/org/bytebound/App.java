@@ -79,7 +79,7 @@ public class App {
     }
 
     static {
-        System.out.println("\n \n \n Code were sucessfuly compiled! \n");
+        System.out.println("\n \n \n Code was sucessfuly compiled! \n");
     }
 
 }

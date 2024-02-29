@@ -16,36 +16,17 @@
             <!-- Header of chats -->
             <div class="header">
                 <!-- Menu -->
-                <div class="menu">
-                    
-                </div>
+                <label class="hamburger-menu">
+                    <input type="checkbox">
+                </label>
                 <!-- search bar -->
                 <form class="search-bar">
                     <button><img src="../media/search.png"></button>
-                    <input type="search" placeholder="Search">
+                    <input type="search" placeholder="Search" id="input">
                 </form>
             </div>
         </aside>
     </div>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        
-        const firebaseConfig = {
-          apiKey: "AIzaSyA3S04Q2YsJCCH24Pt8N6ocsJE7dDtBz_E",
-          authDomain: "shkaf-d50bf.firebaseapp.com",
-          projectId: "shkaf-d50bf",
-          storageBucket: "shkaf-d50bf.appspot.com",
-          messagingSenderId: "101502181839",
-          appId: "1:101502181839:web:eb4e68d285286a52dfb2ba",
-          measurementId: "G-S47WX4CJFY"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-      </script>
     <script src="../js/chat.js"></script>
 </body>
 </html>
