@@ -1,4 +1,6 @@
-document.getElementById('myForm').addEventListener('submit', function(event) {
+
+//HTTP data transfer
+document.getElementById('myForm').addEventListener('submit', function (event) {
   event.preventDefault();
 
   let formData = new FormData(this);
@@ -6,57 +8,63 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
   let formPassword = document.querySelector("#password").value;
 
   if (formLogin !== " " || formPassword !== " ") {
+    let hashedPassword = hashPassword(formPassword);
     formData.append('login', formLogin);
-  formData.append('password', formPassword);
+    formData.append('password', hashedPassword);
 
-  fetch('http://localhost:8000/receiveData', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Error HTTP: ' + response.status);
-    }
-    return response.text(); // Возвращаем ответ сервера
-  })
-  .then(data => {
-
-
-
-
-    switch(data) {
-      default: {
-        console.log("Error with redirect or received data");
-        break;
-      }
-      case("Success: Data received and matched!"): {
-        window.location.href = "chat.html";
-        break;
-      }
-      case("Data not exist in database!"): {
-        console.log("Data not exist in database! \n You was registrated!");
-        alert("Data not exist in database! \n You was registrated!");
-        window.location.href = "chat.html";
-        break;
-      }
-    }
+    fetch('http://localhost:8000/receiveData', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error HTTP: ' + response.status);
+        }
+        return response.text(); // Возвращаем ответ сервера
+      })
+      .then(data => {
 
 
 
 
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+        switch (data) {
+          default: {
+            console.log("Error with redirect or received data");
+            break;
+          }
+          case ("Success: Data received and matched!"): {
+            window.location.href = "chat.html";
+            break;
+          }
+          case ("Data not exist in database!"): {
+            console.log("Data not exist in database! \n You was registrated!");
+            alert("Data not exist in database! \n You was registrated!");
+            window.location.href = "chat.html";
+            break;
+          }
+        }
+
+
+
+
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   } else {
     alert("Login and Password can be a space");
-  } 
+  }
 });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Other logic /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Hash pswd with SHA-256
 
-
-
+function hashPassword(password) {
+  let hashedPassword = CryptoJS.SHA256(password).toString();
+  return hashedPassword;
+}
 
 
 

@@ -11,9 +11,9 @@
     --caret-color: #8774e1;
     --font-regular: "Roboto", -apple-system, apple color emoji, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     --font-monospace: "Roboto Mono", monospace;
-    --bar-width: 25px;
-    --bar-height: 4px;
-    --hamburger-gap: 5px;
+    --bar-width: 23px;
+    --bar-height: 3.5px;
+    --hamburger-gap: 4px;
     --hamburger-animation-time: .3s ease-in-out;
     --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2);
 }
@@ -66,16 +66,26 @@
     transition: inherit;
 }
 
+.chats .chatsPeople {
+    width: 100%;
+    height: calc(100vh - 56px);
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
 .hamburger-menu::before,
 .hamburger-menu::after,
 .hamburger-menu input {
     content: "";
     width: var(--bar-width);
     height: var(--bar-height);
-    background-color: white;
+    background-color: var(--pretext-color);
     border-radius: 9999px;
     transition: opacity var(--hamburger-animation-time), width var(--hamburger-animation-time),
-    rotate var(--hamburger-animation-time), translate var(--hamburger-animation-time);
+    rotate var(--hamburger-animation-time), translate var(--hamburger-animation-time),
+    background-color .15s;
     transform-origin: left center;
 }
 
@@ -91,6 +101,12 @@
     cursor: pointer;
     z-index: 10;
     position: relative;
+}
+
+.hamburger-menu:hover::before,
+.hamburger-menu:hover::after,
+.hamburger-menu:hover input {
+    background-color: var(--text-color);
 }
 
 .hamburger-menu input {
@@ -111,12 +127,14 @@
     rotate: 45deg;
     width: var(--x-width);
     translate: 0 calc(var(--bar-height) / -2);
+    background-color: var(--text-color);
 }
 
 .hamburger-menu:has(input:checked)::after {
     rotate: -45deg;
     width: var(--x-width);
     translate: 0 calc(var(--bar-height) / 2);
+    background-color: var(--text-color);
 }
 
 .search-bar {
