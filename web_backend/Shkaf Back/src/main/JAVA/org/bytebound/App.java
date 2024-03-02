@@ -56,23 +56,29 @@ public class App {
             System.out.println("Логин: " + login);
             System.out.println("Пароль: " + password);
 
-            //Добавляем кавычки для db
-            String newLogin = "'" + login + "'";
-            String newPassword = "'" + password + "'";
 
             // Получаем данные из базы данных и обрабатываем их
-            String responseFromDB = fetchDataAndProcess(newLogin, newPassword);
+            String responseFromDB = fetchUserDataAndProcess(login, password);
             String response;
             String[] parts = responseFromDB.split("\\|\\|");
             String loginFromDatabase = parts[0];
             String passwordFromDatabase = parts[1];
-            if (loginFromDatabase.equals(login) && passwordFromDatabase.equals(password)) {
-                response = "Success: Data received and matched!";
-                System.out.println("Success: Data received and matched!");
-            } else {response = "Check if your data in form are correct!";
-                System.out.println("Error with database login and password \n" + "Database \n Login: " + loginFromDatabase + " \n Password: " + passwordFromDatabase);
-                System.out.println("Users data \n Login: " + login + " \n Password: " + password);
+
+            if (!loginFromDatabase.equals(" ") || !passwordFromDatabase.equals(" ")) {
+                if (loginFromDatabase.equals(login) && passwordFromDatabase.equals(password)) {
+                    response = "Success: Data received and matched!";
+                    System.out.println("Success: Data received and matched!");
+                } else {response = "Check if your data in form are correct!";
+                    System.out.println("Error with database login and password \n" + "Database \n Login: " + loginFromDatabase + " \n Password: " + passwordFromDatabase);
+                    System.out.println("Users data \n Login: " + login + " \n Password: " + password);
+                }
+            } else {
+                response = "Data not exist in database!";
+                System.out.println("Data not exist in database!");
+                System.out.println("Data was inserted in database!");
+                insertUserDataInDataBase(login, password);
             }
+
 
             // Отправляем ответ клиенту
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
@@ -81,19 +87,50 @@ public class App {
             exchange.getResponseBody().close();
         }
 
-        private String fetchDataAndProcess(String login, String password) {
+        private boolean insertUserDataInDataBase(String login, String password) {
+            // Параметры подключения к базе данных
+            String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
+            String dbUsername = "root";
+            String dbPassword = "";
+
+            boolean answer = false;
+
+            //SQL-запрос на вставку данных
+            String insertData = "INSERT INTO users (Login, Password) VALUES ('" + login + "', '" + password + "');";
+
+            try {
+                // Установка соединения с базой данных
+                Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+
+                //Делаем запросы в db и проверяем количество находящихся там ответов на Login
+                PreparedStatement dataINSEERT = connection.prepareStatement(insertData, Statement.RETURN_GENERATED_KEYS);
+                dataINSEERT.executeUpdate();
+
+//                ResultSet generatedKeys = dataINSEERT.getGeneratedKeys();
+//                if (generatedKeys.next()) {
+//                    int generatedId = generatedKeys.getInt(1); // Получение сгенерированного ключа
+//                }
+                answer = true;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return answer;
+        }
+        private String fetchUserDataAndProcess(String login, String password) {
             // Параметры подключения к базе данных
             String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
             String dbUsername = "root";
             String dbPassword = "";
 
             // Инициализация переменных для ответа
-            String answerLogin = "";
-            String answerPassword = "";
+            String answerLogin = " ";
+            String answerPassword = " ";
 
             // SQL-запрос для извлечения данных
-            String selectLogin = "SELECT * FROM users WHERE users.Login=" + login + ";";
-            String selectPassword = "SELECT * FROM users WHERE users.Password=" + password + ";";
+            String selectLogin = "SELECT * FROM users WHERE users.Login='" + login + "';";
+            String selectPassword = "SELECT * FROM users WHERE users.Password='" + password + "';";
 
 
             try {

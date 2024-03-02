@@ -5,7 +5,8 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
   let formLogin = document.querySelector("#login").value;
   let formPassword = document.querySelector("#password").value;
 
-  formData.append('login', formLogin);
+  if (formLogin !== " " || formPassword !== " ") {
+    formData.append('login', formLogin);
   formData.append('password', formPassword);
 
   fetch('http://localhost:8000/receiveData', {
@@ -19,15 +20,37 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
     return response.text(); // Возвращаем ответ сервера
   })
   .then(data => {
-    if (data === "Success: Data received and matched!") {
-      window.location.href = "chat.html";
-    } else {
-      console.log("Error with redirect or received data");
+
+
+
+
+    switch(data) {
+      default: {
+        console.log("Error with redirect or received data");
+        break;
+      }
+      case("Success: Data received and matched!"): {
+        window.location.href = "chat.html";
+        break;
+      }
+      case("Data not exist in database!"): {
+        console.log("Data not exist in database! \n You was registrated!");
+        alert("Data not exist in database! \n You was registrated!");
+        window.location.href = "chat.html";
+        break;
+      }
     }
+
+
+
+
   })
   .catch(error => {
     console.error('Error:', error);
   });
+  } else {
+    alert("Login and Password can be a space");
+  } 
 });
 
 
