@@ -242,6 +242,7 @@ button svg {
     position: relative;
     left: 50%;
     transform: translateX(-50%);
+    cursor: pointer;
 }
 
 .submit-group input:hover {
