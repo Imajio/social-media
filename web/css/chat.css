@@ -16,6 +16,8 @@
     --hamburger-gap: 4px;
     --hamburger-animation-time: .3s ease-in-out;
     --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2);
+    --chatinput-border-radius: 1rem;
+    --chatlist-border-radius: 0.5rem;
 }
 
 
@@ -72,7 +74,18 @@
     background-color: transparent;
     display: flex;
     flex-direction: column;
+    gap: 0.5px;
+    align-items: start;
+    justify-content: start;
     overflow-y: auto;
+}
+
+.chatsPeopleIn {
+    width: 408px;
+    height: 72px;
+    background-color: transparent;
+    border-radius: var(--chatlist-border-radius);
+    cursor: pointer;
 }
 
 .hamburger-menu::before,
@@ -99,7 +112,7 @@
     position: relative;
     left: 10px;
     cursor: pointer;
-    z-index: 10;
+    z-index: 60;
     position: relative;
 }
 
@@ -196,4 +209,55 @@
 
 #input[type="search"]::-webkit-search-cancel-button {
     display: none;
+}
+
+.menu {
+    width: 300px;
+    height: calc(100vh - 10px);
+    background-color: var(--aside-color);
+    border-right: 2px solid var(--search-bar-hover-border-color);
+    position: absolute;
+    top: 0;
+    left: -302px;
+    z-index: 40;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 3px;
+    flex-direction: column;
+    padding-top: 5.5px;
+    transition: left .5s;
+}
+
+.menu h2 {
+    color: var(--text-color);
+    font-size: 2.35em;
+    opacity: 0.0000001;
+    transition: 2s;
+}
+
+.menu hr {
+    width: 90%;
+    border: none;
+    border-radius: 9999px;
+    height: 2px;
+    background-color: var(--search-bar-hover-border-color);
+}
+
+.menu li {
+    width: 98%;
+    height: 56px;
+    border-radius: 7px;
+    background-color: transparent;
+    display: grid;
+    place-items: center;
+    caret-color: transparent;
+    color: var(--pretext-color);
+    cursor: pointer;
+    transition: .3s;
+    font-size: 1.2em;
+}
+
+.menu li:hover {
+    color: var(--text-color);
 }

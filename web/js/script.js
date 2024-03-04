@@ -20,7 +20,7 @@ document.getElementById('myForm').addEventListener('submit', function (event) {
         if (!response.ok) {
           throw new Error('Error HTTP: ' + response.status);
         }
-        return response.text(); // Возвращаем ответ сервера
+        return response.text();
       })
       .then(data => {
 
@@ -38,8 +38,9 @@ document.getElementById('myForm').addEventListener('submit', function (event) {
           }
           case ("Data not exist in database!"): {
             console.log("Data not exist in database! \n You was registrated!");
-            alert("Data not exist in database! \n You was registrated!");
-            window.location.href = "chat.html";
+            const submitButton = document.querySelector("#submit");
+            submitButton.value = "Registrate";
+            submitButton.style.width = "220px";
             break;
           }
         }
@@ -66,8 +67,23 @@ function hashPassword(password) {
   return hashedPassword;
 }
 
+const usernameInput = document.querySelector("#login");
+const passwordInput = document.querySelector("#password");
+const submitButton = document.querySelector("#submit");
 
 
+function checkForm() {
+  if (usernameInput.value.trim() !== '' && passwordInput.value.trim() !== '') {
+    submitButton.removeAttribute('disabled');
+    submitButton.style.cursor = "pointer";
+  } else {
+    submitButton.setAttribute('disabled', 'disabled');
+    submitButton.style.cursor = "not-allowed";
+  }
+}
+
+usernameInput.addEventListener('input', checkForm);
+passwordInput.addEventListener('input', checkForm);
 
 
 
