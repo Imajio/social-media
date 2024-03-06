@@ -5,6 +5,7 @@ function addNewChat(user) {
 let checkBoxInputForMenu = document.getElementById("checkBoxInputForMenu");
 let menu = document.querySelector(".menu");
 let shkafMenu = document.querySelector("#shkafMenu");
+let h3Menu = document.querySelector("#h3Menu");
 
 checkBoxInputForMenu.addEventListener("click", function() {
     if (checkBoxInputForMenu.checked) {
@@ -18,6 +19,14 @@ checkBoxInputForMenu.addEventListener("click", function() {
 
 
 
-document.addEventListener('click', function() {
-    
-});
+
+
+function showNews(newsCount) {
+    if (newsCount !== "none") {
+
+    }
+}
+
+function redirectToProfile() {
+    window.location.href = "profile.html";
+}

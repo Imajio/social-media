@@ -261,3 +261,9 @@
 .menu li:hover {
     color: var(--text-color);
 }
+
+.menu #h3Menu {
+    color: var(--text-color);
+    font-size: 2em;
+    transition: .3s;
+}
