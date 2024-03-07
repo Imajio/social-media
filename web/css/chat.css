@@ -256,6 +256,7 @@
     cursor: pointer;
     transition: .3s;
     font-size: 1.2em;
+    caret-color: transparent;
 }
 
 .menu li:hover {
@@ -263,7 +264,79 @@
 }
 
 .menu #h3Menu {
+    margin-top: 5px;
     color: var(--text-color);
-    font-size: 2em;
+    font-size: 1.4em;
     transition: .3s;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.menu .addcontact {
+    font-family: var(--font-regular);
+    border: 2px solid var(--search-bar-hover-border-color);
+    border-radius: 5px;
+    width: 310px;
+    height: 90px;
+    position: absolute;
+    top: 50px;
+    left: -310px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--aside-color);
+    transition: width .3s , all .3s;
+    opacity: 0;
+}
+
+.menu .addcontact .addcontactform {
+    display: grid;
+    place-content: center;
+    gap: 4px;
+}
+
+.menu #nickname::placeholder {
+    color: var(--pretext-color);
+}
+
+.menu #nickname {
+    width: 240px;
+    height: 36px;
+    background-color: var(--search-bar-background-color);
+    border: 2px solid var(--search-bar-border-color);
+    border-radius: 9999px;
+    color: var(--pretext-color);
+    padding-left: 24px;
+    padding-right: 24px;
+    font-size: 1.05em;
+    font-weight: bold;
+    transition: border .15s, color .15s , all .3s;
+}
+
+.menu #nickname:hover,
+.menu #nickname:focus {
+    color: var(--text-color);
+    border: 2px solid var(--search-bar-hover-border-color);
+    outline: none;
+}
+
+.menu input[type="submit"] {
+    width: 80px;
+    height: 28px;
+    border-radius: 9999px;
+    border: 2px solid var(--search-bar-border-color);
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: bold;
+    background-color: var(--search-bar-background-color);
+    color: var(--pretext-color);
+    transition: all .3s;
+    cursor: pointer;
+}
+
+.menu input[type="submit"]:hover,
+.menu input[type="submit"]:active {
+    color: var(--text-color);
+    border: 2px solid var(--search-bar-hover-border-color);
+    outline: none;
 }

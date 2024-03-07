@@ -12,10 +12,14 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class App {
 
     static String login;
     static String password;
+    static String hashedpassword;
 
     public static void main(String[] args) throws IOException {
         // Создание HTTP-сервера
@@ -56,27 +60,51 @@ public class App {
             System.out.println("Логин: " + login);
             System.out.println("Пароль: " + password);
 
+            try {
+                // Создание экземпляра MessageDigest с алгоритмом SHA-256
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+                // Получение байтового представления пароля
+                byte[] passwordBytes = password.getBytes();
+
+                // Обновление MessageDigest с байтовым представлением пароля
+                byte[] hashedBytes = digest.digest(passwordBytes);
+
+                // Преобразование байтового массива в строку в шестнадцатеричном формате
+                StringBuilder hexString = new StringBuilder();
+                for (byte hashedByte : hashedBytes) {
+                    String hex = Integer.toHexString(0xff & hashedByte);
+                    if (hex.length() == 1) {
+                        hexString.append('0');
+                    }
+                    hexString.append(hex);
+                }
+
+                hashedpassword = hexString.toString();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
 
             // Получаем данные из базы данных и обрабатываем их
-            String responseFromDB = fetchUserDataAndProcess(login, password);
+            String responseFromDB = fetchUserDataAndProcess(login, hashedpassword);
             String response;
             String[] parts = responseFromDB.split("\\|\\|");
             String loginFromDatabase = parts[0];
             String passwordFromDatabase = parts[1];
 
             if (!loginFromDatabase.equals(" ") || !passwordFromDatabase.equals(" ")) {
-                if (loginFromDatabase.equals(login) && passwordFromDatabase.equals(password)) {
+                if (loginFromDatabase.equals(login) && passwordFromDatabase.equals(hashedpassword)) {
                     response = "Success: Data received and matched!";
                     System.out.println("Success: Data received and matched!");
                 } else {response = "Check if your data in form are correct!";
                     System.out.println("Error with database login and password \n" + "Database \n Login: " + loginFromDatabase + " \n Password: " + passwordFromDatabase);
-                    System.out.println("Users data \n Login: " + login + " \n Password: " + password);
+                    System.out.println("Users data \n Login: " + login + " \n Password: " + hashedpassword);
                 }
             } else {
                 response = "Data not exist in database!";
                 System.out.println("Data not exist in database!");
                 System.out.println("Data was inserted in database!");
-                insertUserDataInDataBase(login, password);
+                insertUserDataInDataBase(login, hashedpassword);
             }
 
 

@@ -28,16 +28,21 @@
             <nav class="menu">
                 <h2 id="shkafMenu">Shkaf</h2>
                 <hr>
-                <li>New Chat</li>
-                <li onclick="redirectToProfile()">Profile</li>
+                <li onclick="newchatonpress()">New Chat</li>
+                <div class="addcontact">
+                    <form action="" class="addcontactform">
+                        <input type="text" id="nickname" placeholder="Nickname">
+                        <input type="submit" value="Add">
+                    </form>
+                </div>
+                <li onclick="">Profile</li>
                 <li>Settings</li>
                 <hr>
-                <h3 id="h3Menu">No news yet!</h3>
+                <h3 id="h3Menu">No news yet</h3>
+
             </nav>
             <div class="chatsPeople">
-                <div class="chatsPeopleIn"></div>
-                <div class="chatsPeopleIn"></div>
-                <div class="chatsPeopleIn"></div>
+
             </div>
         </aside>
     </div>
