@@ -331,7 +331,7 @@
     background-color: var(--search-bar-background-color);
     color: var(--pretext-color);
     transition: all .3s;
-    cursor: pointer;
+    cursor: not-allowed;
 }
 
 .menu input[type="submit"]:hover,

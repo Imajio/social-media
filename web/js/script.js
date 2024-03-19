@@ -12,7 +12,11 @@ document.getElementById('myForm').addEventListener('submit', function (event) {
     formData.append('login', formLogin);
     formData.append('password', hashedPassword);
 
-    fetch('http://localhost:8000/receiveData', {
+    if (submitButton.value === "Enter") {
+
+      formData.append('method', 'enter');
+
+      fetch('http://localhost:8000/receiveData', {
       method: 'POST',
       body: formData
     })
@@ -23,42 +27,70 @@ document.getElementById('myForm').addEventListener('submit', function (event) {
         return response.text();
       })
       .then(data => {
-
-
-
-
         switch (data) {
           default: {
             console.log("Error with redirect or received data");
             break;
           }
           case ("Success: Data received and matched!"): {
+            document.cookie = "nickname=" + document.querySelector("#login").value + ";path=/";
             window.location.href = "chat.html";
             break;
           }
           case ("Data not exist in database!"): {
-            console.log("Data not exist in database! \n You was registrated!");
+            console.log("Data not exist in database! \n Do you want to registrated!");
             const submitButton = document.querySelector("#submit");
             submitButton.value = "Registrate";
             submitButton.style.width = "220px";
             break;
           }
         }
-
-
-
-
       })
       .catch(error => {
         console.error('Error:', error);
       });
+
+    } else if (submitButton.value === "Registrate") {
+        formData.append('method', 'registrate');
+
+        fetch('http://localhost:8000/receiveData', {
+          method: 'POST',
+          body: formData
+        }) .then(response => {
+          if (!response.ok) {
+            throw new Error('Error HTTP: ' + response.status);
+          }
+          return response.text();
+        }) .then(data => {
+          switch (data) {
+            default: {
+              console.log("Error with redirect or received data");
+              break;
+            }
+            case ("Data not exist in database!"): {
+              console.log("Data not exist in database! \n Do you want to registrated!");
+              const submitButton = document.querySelector("#submit");
+              submitButton.value = "Registrate";
+              submitButton.style.width = "220px";
+              break;
+            }
+            case ("Data was succesful inserted in database!"): {
+              console.log("You registrated now");
+              document.cookie = "nickname=" + document.querySelector("#nickname") + "; expires=" + new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toUTCString() + "; path=/";
+              window.location.href = "chat.html";
+              break;
+            }
+          }
+        }) .catch(error => {
+          console.error('Error', error);
+        })
+    }
   } else {
     alert("Login and Password can be a space");
   }
 });
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Other logic /////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Other logic //////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Hash pswd with SHA-256
 
@@ -73,7 +105,7 @@ const submitButton = document.querySelector("#submit");
 
 
 function checkForm() {
-  if (usernameInput.value.trim() !== '' && passwordInput.value.trim() !== '') {
+  if (usernameInput.value.trim() !== '' && passwordInput.value.trim() !== '' && !document.querySelector("#login").value.startsWith("null")) {
     submitButton.removeAttribute('disabled');
     submitButton.style.cursor = "pointer";
   } else {
@@ -85,10 +117,20 @@ function checkForm() {
 usernameInput.addEventListener('input', checkForm);
 passwordInput.addEventListener('input', checkForm);
 
+//If cookie already exist, redirect to chats
 
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+          return cookie.substring(name.length + 1);
+      }
+  }
+  return null;
+}
 
-
-
+document.cookie = "nickname=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
 
 
