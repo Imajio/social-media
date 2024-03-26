@@ -76,7 +76,7 @@ document.getElementById('myForm').addEventListener('submit', function (event) {
             }
             case ("Data was succesful inserted in database!"): {
               console.log("You registrated now");
-              document.cookie = "nickname=" + document.querySelector("#nickname") + "; expires=" + new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toUTCString() + "; path=/";
+              document.cookie = "nickname=" + document.querySelector("#login").value + ";path=/";
               window.location.href = "chat.html";
               break;
             }
