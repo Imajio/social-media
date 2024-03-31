@@ -146,10 +146,11 @@ function ifChatCouldBeCreatedCreateChat(nick, last) {
     addChatToChatsPeople("../media/depositphotos_54081723-stock-photo-beautiful-nature-landscape.jpg", nick, last);
 }
 
-function addChatToChatsPeople(avatarSrc, nickname, lastMessage) {
+function addChatToChatsPeople(avatarSrc, nicknameOfChat, lastMessage) {
     // Create new chat element
     let newChat = document.createElement('div');
     newChat.classList.add('chatsPeopleIn');
+    newChat.setAttribute('onclick', 'openChatFunction(\"' + nicknameOfChat + '\")');
 
     // Create chat elements
     let chatAvatar = document.createElement('div');
@@ -161,7 +162,7 @@ function addChatToChatsPeople(avatarSrc, nickname, lastMessage) {
 
     let chatNickname = document.createElement('div');
     chatNickname.classList.add('chatnickname');
-    chatNickname.textContent = nickname; // Set nickname
+    chatNickname.textContent = nicknameOfChat; // Set nickname
 
     let chatLastMessage = document.createElement('div');
     chatLastMessage.classList.add('chatlastMessage');
@@ -210,3 +211,61 @@ fetch('http://localhost:8000/takeAllChatsOfUserFromDataBase', {
         console.log("No chats yet");
     });
 //}
+
+function openChatFunction(nickOnHeader) {
+    let ifChatAllreadyOpened = document.querySelector('.chatPlaceWithMessages');
+
+    if (!ifChatAllreadyOpened) {
+        let lastActivity = "last activity";
+        const hero = document.querySelector('.hero');
+
+        const messagesArea = document.createElement('div');
+        messagesArea.classList.add('chatPlaceWithMessages');
+
+
+        const header = document.createElement('div');
+        header.classList.add('chatPlaceWithMessagesHeader');
+
+        const headerData = document.createElement('div');
+        headerData.classList.add('chatPlaceWithMessagesHeaderPData');
+        headerData.innerHTML = '<img src=\'../media/depositphotos_54081723-stock-photo-beautiful-nature-landscape.jpg\' class=\'chatPlaceWithMessagesHeaderAvatar\'>'
+        + '<p class=\'chatPlaceWithMessagesHeaderParagraf\'>' + 
+        nickOnHeader + '</p>\n' + '<p class=\'chatPlaceWithMessagesHeaderLastActivity\'>' + lastActivity + '</p>';
+
+        header.appendChild(headerData);
+
+        const footer = document.createElement('div');
+        footer.classList.add('chatPlaceWithMessagesFooter');
+
+        const placeWithInputs = document.createElement('div');
+        placeWithInputs.classList.add('textInputWithMessage');
+        placeWithInputs.innerHTML = '<input type="text" name="" id="inputForMessageOnFooterOfChat" placeholder="Message">';
+
+        const cRipple = document.createElement('div');
+        cRipple.classList.add('c-ripple');
+        cRipple.innerHTML = '<img src="../media/paper-plane.png" alt="">';
+
+        placeWithInputs.appendChild(cRipple);
+        footer.appendChild(placeWithInputs);
+        messagesArea.appendChild(header);
+        messagesArea.appendChild(footer);
+
+        hero.appendChild(messagesArea);
+    } else {
+        let lastActivity = "last activity";
+        const headerData = document.querySelector('.chatPlaceWithMessagesHeaderPData');
+        headerData.innerHTML = '<img src=\'../media/depositphotos_54081723-stock-photo-beautiful-nature-landscape.jpg\' class=\'chatPlaceWithMessagesHeaderAvatar\'>'
+        + '<p class=\'chatPlaceWithMessagesHeaderParagraf\'>' + 
+        nickOnHeader + '</p>\n' + '<p class=\'chatPlaceWithMessagesHeaderLastActivity\'>' + lastActivity + '</p>';
+
+        const header = document.createElement('div');
+        header.classList.add('chatPlaceWithMessagesHeader');
+
+        
+
+
+        const inputForMessage = document.querySelector('textInputWithMessage');
+        inputForMessage.innerHTML = '<input type="text" name="" id="inputForMessageOnFooterOfChat" placeholder="Message">';
+    }
+
+}

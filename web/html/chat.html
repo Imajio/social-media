@@ -8,7 +8,7 @@
     <link rel="icon" type="image/x-icon" href="../media/telegram.png">
 </head>
 <body>
-    <div src="../media/c0a13a19-2add-404e-b89d-769117f16801.webp" class="background"></div>
+    <div class="background"></div>
     <!-- Main -->
     <div class="hero">
         <!-- Block with chats -->
@@ -31,7 +31,7 @@
                 <li onclick="newchatonpress()">New Chat</li>
                 <div class="addcontact">
                     <form action="" class="addcontactform">
-                        <input type="text" id="nickname" placeholder="Nickname">
+                        <input type="text" id="nickname" placeholder="Nickname" autocomplete="off">
                         <input type="submit" value="Add" id="addchatbutton">
                     </form>
                 </div>
@@ -41,9 +41,11 @@
                 <h3 id="h3Menu">No news yet</h3>
 
             </nav>
+            <!-- Chats -->
             <div class="chatsPeople">
             </div>
         </aside>
+
     </div>
     <script src="../js/chat.js"></script>
 </body>
