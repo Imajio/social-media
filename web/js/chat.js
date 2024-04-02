@@ -234,20 +234,24 @@ function openChatFunction(nickOnHeader) {
 
         header.appendChild(headerData);
 
+        const messagesAreaWithoutFooterAndHeader = document.createElement('div');
+        messagesAreaWithoutFooterAndHeader.classList.add('messages-area');
+
         const footer = document.createElement('div');
         footer.classList.add('chatPlaceWithMessagesFooter');
 
         const placeWithInputs = document.createElement('div');
         placeWithInputs.classList.add('textInputWithMessage');
-        placeWithInputs.innerHTML = '<input type="text" name="" id="inputForMessageOnFooterOfChat" placeholder="Message">';
+        placeWithInputs.innerHTML = '<input type="text" name="" id="inputForMessageOnFooterOfChat" placeholder="Message" autocomplete="off">';
 
         const cRipple = document.createElement('div');
-        cRipple.classList.add('c-ripple');
-        cRipple.innerHTML = '<img src="../media/paper-plane.png" alt="">';
+        cRipple.classList.add('cRipple');
+        cRipple.innerHTML = '<img src="../media/paper-plane.png" alt="" onclick=\"onPressSendMessageButton(\'' + nickOnHeader + '\')\">';
 
         placeWithInputs.appendChild(cRipple);
         footer.appendChild(placeWithInputs);
         messagesArea.appendChild(header);
+        messagesArea.appendChild(messagesAreaWithoutFooterAndHeader);
         messagesArea.appendChild(footer);
 
         hero.appendChild(messagesArea);
@@ -258,14 +262,45 @@ function openChatFunction(nickOnHeader) {
         + '<p class=\'chatPlaceWithMessagesHeaderParagraf\'>' + 
         nickOnHeader + '</p>\n' + '<p class=\'chatPlaceWithMessagesHeaderLastActivity\'>' + lastActivity + '</p>';
 
-        const header = document.createElement('div');
-        header.classList.add('chatPlaceWithMessagesHeader');
-
+        const inputForMessage = document.querySelector('.textInputWithMessage');
+        inputForMessage.innerHTML = '<input type="text" name="" id="inputForMessageOnFooterOfChat" placeholder="Message" autocomplete="off">';
         
+        const cRipple = document.createElement('div');
+        cRipple.classList.add('cRipple');
+        cRipple.innerHTML = '<img src="../media/paper-plane.png" alt="" onclick=\"onPressSendMessageButton(\'' + nickOnHeader + '\')\">';
 
-
-        const inputForMessage = document.querySelector('textInputWithMessage');
-        inputForMessage.innerHTML = '<input type="text" name="" id="inputForMessageOnFooterOfChat" placeholder="Message">';
+        inputForMessage.appendChild(cRipple);
     }
+
+}
+
+function onPressSendMessageButton(nickofreceiver) {
+    let message = document.querySelector('#inputForMessageOnFooterOfChat').value;
+
+    if (message && message != "" && message != null) {
+
+        const ownMessageArea = document.createElement('div');
+        ownMessageArea.classList.add('own-message-area');
+
+        const ownMessage = document.createElement('div');
+        ownMessage.classList.add('own-message');
+        ownMessage.innerText = message;
+
+        const messagesArea = document.querySelector('.messages-area');
+
+        ownMessageArea.appendChild(ownMessage);
+        messagesArea.appendChild(ownMessageArea);
+
+
+        sendMessageToDataBase(getCookie("nickname"), nickofreceiver, message);
+
+        //clearing message input
+        document.querySelector('#inputForMessageOnFooterOfChat').value = null;
+    }
+}
+
+function sendMessageToDataBase(sender_nick,receiver_nick,message) {
+
+    console.log(sender_nick + "->" + receiver_nick + "\nMessage: " + message);
 
 }
