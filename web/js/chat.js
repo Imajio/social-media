@@ -255,6 +255,7 @@ function openChatFunction(nickOnHeader) {
         messagesArea.appendChild(footer);
 
         hero.appendChild(messagesArea);
+        document.querySelector('.background').style.filter = 'brightness(0.55)';
     } else {
         let lastActivity = "last activity";
         const headerData = document.querySelector('.chatPlaceWithMessagesHeaderPData');
@@ -302,5 +303,18 @@ function onPressSendMessageButton(nickofreceiver) {
 function sendMessageToDataBase(sender_nick,receiver_nick,message) {
 
     console.log(sender_nick + "->" + receiver_nick + "\nMessage: " + message);
+
+    fetch('http://localhost:8000/sendMessage', {
+        method: 'POST',
+        body: sender_nick + ","  + receiver_nick + ","  + message
+    })
+        .then(response => response.json())
+        .then(data => {
+            
+
+        })
+        .catch(error => {
+            console.error(error.message);
+        });
 
 }
