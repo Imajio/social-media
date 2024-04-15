@@ -576,27 +576,25 @@ div::selection , img::selection {
 }
 
 .stranger-message {
-    min-height: 20px;
-    min-width: 50px;
     border-radius: 15px 15px 15px 5px;
-    max-width: max-content;
-    max-height: max-content;
-    padding: 4px 8px 5px;
+    width: max-content;
+    height: max-content;
+    padding: 4px 10px 5px 30px;
     background-color: var(--aside-color);
     font-family: var(--font-monospace);
     font-size: 1em;
     color: var(--text-color);
+    text-align: end;
 }
 
 .own-message {
-    min-height: 20px;
-    min-width: 50px;
     border-radius: 15px 15px 5px 15px;
-    max-width: max-content;
-    max-height: max-content;
-    padding: 4px 8px 5px;
+    width: max-content;
+    height: max-content;
+    padding: 4px 30px 5px 10px;
     background-color: var(--message-out-background-color);
     font-family: var(--font-monospace);
     font-size: 1em;
     color: var(--text-color);
+    text-align: end;
 }

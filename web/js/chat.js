@@ -6,27 +6,22 @@ let addcontactform = document.querySelector(".addcontact");
 let nickname = document.querySelector("#nickname");
 let i = 0;
 let addchatbutton = document.querySelector("#addchatbutton");
+//WEB SOCKET////////////////////////////////////////////////////////////////////////
 
-nickname.addEventListener('input', function () {
-    if (nickname.value != '' && nickname.value != getCookie("nickname")) {
-        addchatbutton.removeAttribute('disabled');
-        addchatbutton.style.cursor = "pointer";
-    } else {
-        addchatbutton.setAttribute('disabled', 'disabled');
-        addchatbutton.style.cursor = "not-allowed";
-    }
-});
+let webSocketAdress = "ws://localhost:8080/sendMessage";
 
-document.querySelector(".addcontactform").addEventListener("submit", function (event) {
-    event.preventDefault();
+let socket = new WebSocket(webSocketAdress);
 
-    console.log(nickname.value);
 
-    if (nickname.value != null && nickname.value != "") {
-        newchatafteraddpressed(getCookie("nickname"), nickname.value);
-        console.log("Your nick from cookie: " + getCookie("nickname") + "\nNickname that you wanna add is: " + nickname.value);
-    } else { console.log("enter nickname"); }
-});
+let webSocketOnOpenAdress = "ws://localhost:8080/login";
+
+let socketLogin = new WebSocket(webSocketOnOpenAdress);
+////////////////////////////////////////////////////////////////////////////
+//Cookie////////////////////////////////////////////////////////////////////////////////
+
+function setCookie(cookieName, cookieValue) {
+    document.cookie = cookieName + "=" + cookieValue + ";path=/"
+}
 
 function deleteCookie(name) {
     document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -43,12 +38,35 @@ function getCookie(name) {
     return null;
 }
 
+//////////////////////////////////////////////////////////////////////////////////
+//If nick ok to open new chat
+nickname.addEventListener('input', function () {
+    if (nickname.value != '' && nickname.value != getCookie("nickname")) {
+        addchatbutton.removeAttribute('disabled');
+        addchatbutton.style.cursor = "pointer";
+    } else {
+        addchatbutton.setAttribute('disabled', 'disabled');
+        addchatbutton.style.cursor = "not-allowed";
+    }
+});
+//If all ok with taken nick , continue/////////////////////////////
+document.querySelector(".addcontactform").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    console.log(nickname.value);
+
+    if (nickname.value != null && nickname.value != "") {
+        newchatafteraddpressed(getCookie("nickname"), nickname.value);
+        console.log("Your nick from cookie: " + getCookie("nickname") + "\nNickname that you wanna add is: " + nickname.value);
+    } else { console.log("enter nickname"); }
+});
+//If cookie with nickname not exist, then redirect to main login page///////////
 window.addEventListener('load', function () {
     if (getCookie("nickname") == null) {
         window.location.href = "index.html";
     }
 });
-
+//Aside menu///////////////////////////////////////////////////////////////////
 checkBoxInputForMenu.addEventListener("click", function () {
     if (checkBoxInputForMenu.checked) {
         menu.style.left = "0";
@@ -68,7 +86,7 @@ checkBoxInputForMenu.addEventListener("click", function () {
 
     }
 });
-
+//New chat ceationg hide aside menu//////////////
 function newchatonpress() {
     if (i === 0) {
         addcontactform.style.width = "310px";
@@ -85,8 +103,7 @@ function newchatonpress() {
         i--;
     }
 }
-
-
+//Fetch data of 2 users to backend /////////////////////////////////////////////////////
 function newchatafteraddpressed(user1, user2) {
     let dataToSend = {
         user1: user1,
@@ -140,12 +157,12 @@ function newchatafteraddpressed(user1, user2) {
             console.error('Error:', error.message);
         });
 }
-
+//If users exist then create chat//////////////////////////////////////////////////////////
 function ifChatCouldBeCreatedCreateChat(nick, last) {
     console.log("Chat was created between: " + " You -> " + getCookie("nickname") + " | Other humanoid -> " + nickname.value);
     addChatToChatsPeople("../media/depositphotos_54081723-stock-photo-beautiful-nature-landscape.jpg", nick, last);
 }
-
+//Add hat to aside///////////////////////////////////////////
 function addChatToChatsPeople(avatarSrc, nicknameOfChat, lastMessage) {
     // Create new chat element
     let newChat = document.createElement('div');
@@ -179,21 +196,14 @@ function addChatToChatsPeople(avatarSrc, nicknameOfChat, lastMessage) {
     let chatsPeople = document.querySelector('.chatsPeople');
     chatsPeople.appendChild(newChat);
 }
-
-
+//News on aside menu////////////////////////////////////////
 function showNews(newsCount) {
     if (newsCount !== "none") {
 
     }
 }
 
-function redirectToProfile() {
-    window.location.href = "profile.html";
-}
-
-// window.addEventListener('load', takeAllChatsOfUserFromDataBase());
-
-// function takeAllChatsOfUserFromDataBase() {
+//Load all chats
 fetch('http://localhost:8000/takeAllChatsOfUserFromDataBase', {
     method: 'POST',
     body: getCookie("nickname")
@@ -210,8 +220,8 @@ fetch('http://localhost:8000/takeAllChatsOfUserFromDataBase', {
     .catch(error => {
         console.log("No chats yet");
     });
-//}
-
+////////////////////////////////////
+//UI of opened chat///////////////////////////////////////////////
 function openChatFunction(nickOnHeader) {
     let ifChatAllreadyOpened = document.querySelector('.chatPlaceWithMessages');
 
@@ -274,7 +284,7 @@ function openChatFunction(nickOnHeader) {
     }
 
 }
-
+//Send button on press
 function onPressSendMessageButton(nickofreceiver) {
     let message = document.querySelector('#inputForMessageOnFooterOfChat').value;
 
@@ -292,29 +302,43 @@ function onPressSendMessageButton(nickofreceiver) {
         ownMessageArea.appendChild(ownMessage);
         messagesArea.appendChild(ownMessageArea);
 
-
-        sendMessageToDataBase(getCookie("nickname"), nickofreceiver, message);
-
         //clearing message input
         document.querySelector('#inputForMessageOnFooterOfChat').value = null;
+
+        sendMessageToServer(getCookie("nickname") + "," + nickofreceiver + "," + message);
     }
 }
 
-function sendMessageToDataBase(sender_nick,receiver_nick,message) {
-
-    console.log(sender_nick + "->" + receiver_nick + "\nMessage: " + message);
-
-    fetch('http://localhost:8000/sendMessage', {
-        method: 'POST',
-        body: sender_nick + ","  + receiver_nick + ","  + message
-    })
-        .then(response => response.json())
-        .then(data => {
-            
-
-        })
-        .catch(error => {
-            console.error(error.message);
-        });
-
+function sendMessageToServer(data) {
+    socket.send(JSON.stringify(data));
 }
+
+
+// When the login socket is opened, send the user's nickname//
+socketLogin.addEventListener('open', function(event) {      //
+    let nickname = getCookie("nickname");                   //
+    socketLogin.send(nickname);                             //
+});                                                         //
+                                                            //
+socketLogin.addEventListener('error', function(event) {     //
+    console.error('Web Socket login error: ' + event);      //
+});                                                         //
+//////////////////////////////////////////////////////////////
+
+
+//Send data with Web Socket to database
+socket.addEventListener('open', function(event){
+
+});
+
+socket.addEventListener('message', function(event) {
+    let receivedData = event.data;
+    console.log('Received data from server:', receivedData);
+});
+
+socket.addEventListener('error', function(event) {
+    console.error('WebSocket error:', event);
+});
+
+
+//////////////////////////////////////////////////////////

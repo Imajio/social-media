@@ -1,53 +1,35 @@
 package org.bytebound;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import org.java_websocket.WebSocket;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
-import java.util.Scanner;
 
-public class receiveMessageFromClient implements HttpHandler {
+public class MessageHandlerLogic implements MessageHandler {
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        //Header settings
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
-        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-            exchange.sendResponseHeaders(204, -1);
-            return;
-        }
+    public void handleMessage(String message) {
+        System.out.println("handleMessage -> " + message);
+        String[] splitedDataOfBody = message.split(",");
 
-        //Main logic
-        InputStream requestBody = exchange.getRequestBody();
-        Scanner scanner = new Scanner(requestBody, "UTF-8").useDelimiter("\\A");
-        String body = scanner.hasNext() ? scanner.next() : "";
-        scanner.close();
-        System.out.println(body);
-
-        String[] splitedDataOfBody = body.split(",");
-
-        String nickOfSender = splitedDataOfBody[0];
+        String nickOfSender = splitedDataOfBody[0].substring(1);
         String nickOfReceiver = splitedDataOfBody[1];
         String messageText = splitedDataOfBody[2];
+        messageText = messageText.substring(0, messageText.length() - 1);
 
         System.out.println(nickOfSender + "\n" + nickOfReceiver + "\n" + messageText + "\n");
 
         Timestamp response = null;
 
-        int  messageIdAfterAddingToDataBase = insertMessageIntoDatabase(nickOfSender, nickOfReceiver, messageText);
-        if (messageIdAfterAddingToDataBase != -1) {
-            response = dataOfSentMessage(messageIdAfterAddingToDataBase);
-            System.out.println("Data of sended message -> " + response);
-        } else {
-            System.err.println("Error with fetching data of message!");
-        }
-
+        insertMessageIntoDatabase(nickOfSender, nickOfReceiver, messageText);
+//        if (messageIdAfterAddingToDataBase != -1) {
+//            response = dataOfSentMessage(messageIdAfterAddingToDataBase);
+//            System.out.println("Data of sended message -> " + response);
+//        } else {
+//            System.err.println("Error with fetching data of message!");
+//        }
     }
 
-    private Timestamp dataOfSentMessage(int messageId) {
+    @Override
+    public Timestamp dataOfSentMessage(int messageId) {
         Timestamp answer = null;
         String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
         String dbUsername = "root";
@@ -85,8 +67,10 @@ public class receiveMessageFromClient implements HttpHandler {
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
         ) {
 
+            int idOfReceiver = findNickId(nickOfReceiver);
+
             preparedStatement.setInt(1,findNickId(nickOfSender));
-            preparedStatement.setInt(2,findNickId(nickOfReceiver));
+            preparedStatement.setInt(2,idOfReceiver);
             preparedStatement.setString(3,messageText);
 
             int rowsAffected = preparedStatement.executeUpdate();
@@ -136,5 +120,9 @@ public class receiveMessageFromClient implements HttpHandler {
 
         System.out.println(answer);
         return answer;
+    }
+    @Override
+    public void sendMessageToReceiver(int receiverId, String message, WebSocket conn) {
+
     }
 }
