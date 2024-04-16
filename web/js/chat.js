@@ -6,17 +6,14 @@ let addcontactform = document.querySelector(".addcontact");
 let nickname = document.querySelector("#nickname");
 let i = 0;
 let addchatbutton = document.querySelector("#addchatbutton");
-//WEB SOCKET////////////////////////////////////////////////////////////////////////
 
-let webSocketAdress = "ws://localhost:8080/sendMessage";
+//WEB SOCKET////////////////////////////////////////////////////////////////////////////
+let webSocketOnOpenAdress = null;
+let socketLogin = null;
+let webSocketAdress = null;
+let socket = null;
+////////////////////////////////////////////////////////////////////////////////////////
 
-let socket = new WebSocket(webSocketAdress);
-
-
-let webSocketOnOpenAdress = "ws://localhost:8080/login";
-
-let socketLogin = new WebSocket(webSocketOnOpenAdress);
-////////////////////////////////////////////////////////////////////////////
 //Cookie////////////////////////////////////////////////////////////////////////////////
 
 function setCookie(cookieName, cookieValue) {
@@ -226,6 +223,10 @@ function openChatFunction(nickOnHeader) {
     let ifChatAllreadyOpened = document.querySelector('.chatPlaceWithMessages');
 
     if (!ifChatAllreadyOpened) {
+        //TCP Connection with server
+        onChatOpenSocket();
+        onChatOpenSocketDataTransfer();
+
         let lastActivity = "last activity";
         const hero = document.querySelector('.hero');
 
@@ -267,6 +268,12 @@ function openChatFunction(nickOnHeader) {
         hero.appendChild(messagesArea);
         document.querySelector('.background').style.filter = 'brightness(0.55)';
     } else {
+        //TCP Connection with server
+        socket.close();
+        socketLogin.close();
+        onChatOpenSocket();
+        onChatOpenSocketDataTransfer();
+
         let lastActivity = "last activity";
         const headerData = document.querySelector('.chatPlaceWithMessagesHeaderPData');
         headerData.innerHTML = '<img src=\'../media/depositphotos_54081723-stock-photo-beautiful-nature-landscape.jpg\' class=\'chatPlaceWithMessagesHeaderAvatar\'>'
@@ -310,35 +317,57 @@ function onPressSendMessageButton(nickofreceiver) {
 }
 
 function sendMessageToServer(data) {
-    socket.send(JSON.stringify(data));
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(data));
+    }
 }
 
+function addMessageOfReceiver(message) {
+    const strangerMessageArea = document.createElement('div');
+    strangerMessageArea.classList.add('stranger-message-area');
+
+    const strangerMessage = document.createElement('div');
+    strangerMessage.classList.add('stranger-message');
+    strangerMessage.innerText = message;
+
+    const messagesArea = document.querySelector('.messages-area');
+
+    strangerMessageArea.appendChild(strangerMessage);
+    messagesArea.appendChild(strangerMessageArea);
+}
 
 // When the login socket is opened, send the user's nickname//
-socketLogin.addEventListener('open', function(event) {      //
-    let nickname = getCookie("nickname");                   //
-    socketLogin.send(nickname);                             //
-});                                                         //
-                                                            //
-socketLogin.addEventListener('error', function(event) {     //
-    console.error('Web Socket login error: ' + event);      //
-});                                                         //
+function onChatOpenSocketDataTransfer() {
+    webSocketOnOpenAdress = "ws://localhost:8080/login";
+    socketLogin = new WebSocket(webSocketOnOpenAdress);
+
+    socketLogin.addEventListener('open', function(event) {      
+        let nickname = getCookie("nickname");                   
+        socketLogin.send(nickname);                             
+    });                                                         
+                                                            
+    socketLogin.addEventListener('error', function(event) {     
+        console.error('Web Socket login error: ' + event);      
+    });
+}                                                         
 //////////////////////////////////////////////////////////////
 
-
 //Send data with Web Socket to database
-socket.addEventListener('open', function(event){
+function onChatOpenSocket() {
+    webSocketAdress = "ws://localhost:8080/sendMessage";
+    socket = new WebSocket(webSocketAdress);
 
-});
+    socket.addEventListener('open', function(event){
 
-socket.addEventListener('message', function(event) {
-    let receivedData = event.data;
-    console.log('Received data from server:', receivedData);
-});
+    });
 
-socket.addEventListener('error', function(event) {
-    console.error('WebSocket error:', event);
-});
+    socket.addEventListener('message', function(event) {
+        let receivedData = event.data;
+        console.log('Received data from server:', receivedData);
+    });
 
-
+    socket.addEventListener('error', function(event) {
+        console.error('WebSocket error:', event);
+    });
+}
 //////////////////////////////////////////////////////////
