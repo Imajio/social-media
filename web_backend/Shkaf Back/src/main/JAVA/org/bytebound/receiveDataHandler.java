@@ -34,7 +34,7 @@ public class receiveDataHandler implements HttpHandler {
         Scanner scanner = new Scanner(requestBody, "UTF-8").useDelimiter("\\A");
         String requestData = scanner.hasNext() ? scanner.next() : "";
         scanner.close();
-        System.out.println("Data from form: " + requestData);
+        System.out.println("[receiveDataHandler] Data from form: " + requestData);
 
         // Ищем значения для login и password
         String loginPattern = "Content-Disposition: form-data; name=\"login\"\\s*\\r?\\n\\r?\\n(.*?)\\r?\\n";
@@ -46,9 +46,9 @@ public class receiveDataHandler implements HttpHandler {
         method = extractValue(requestData, methodPattern);
 
         // Выводим полученные значения на консоль
-        System.out.println("Login: " + login);
-        System.out.println("Password: " + password);
-        System.out.println("Method: " + method);
+        System.out.println("[receiveDataHandler] Login: " + login);
+        System.out.println("[receiveDataHandler] Password: " + password);
+        System.out.println("[receiveDataHandler] Method: " + method);
 
         try {
             // Создание экземпляра MessageDigest с алгоритмом SHA-256
@@ -85,22 +85,22 @@ public class receiveDataHandler implements HttpHandler {
         if (!loginFromDatabase.equals(" ") || !passwordFromDatabase.equals(" ")) {
             if (loginFromDatabase.equals(login) && passwordFromDatabase.equals(hashedpassword)) {
                 response = "Success: Data received and matched!";
-                System.out.println("Success: Data received and matched!");
-                System.out.println("Database login and password \n" + "Database \n Login: " + loginFromDatabase + " \n Password: " + passwordFromDatabase);
-                System.out.println("Users data \n Login: " + login + " \n Password: " + hashedpassword + "\n s------------------------------------------------ \n ");
+                System.out.println("[receiveDataHandler] Success: Data received and matched!");
+                System.out.println("[receiveDataHandler] Database login and password \n" + "Database \n Login: " + loginFromDatabase + " \n Password: " + passwordFromDatabase);
+                System.out.println("[receiveDataHandler] Users data \n Login: " + login + " \n Password: " + hashedpassword + "\n s------------------------------------------------ \n ");
             } else {
                 response = "Check if your data in form are correct!";
-                System.out.println("Error with database login and password \n" + "Database \n Login: " + loginFromDatabase + " \n Password: " + passwordFromDatabase);
-                System.out.println("Users data \n Login: " + login + " \n Password: " + hashedpassword + "\n ------------------------------------------------------- \n ");
+                System.out.println("[receiveDataHandler] Error with database login and password \n" + "Database \n Login: " + loginFromDatabase + " \n Password: " + passwordFromDatabase);
+                System.out.println("[receiveDataHandler] Users data \n Login: " + login + " \n Password: " + hashedpassword + "\n ------------------------------------------------------- \n ");
             }
         } else if (method.equals("registrate")) {
             insertUserDataInDataBase(login, hashedpassword);
             response = "Data was succesful inserted in database!";
-            System.out.println("Data was succesful inserted in database! You now registrated! \n ------------------------------------------------- \n ");
+            System.out.println("[receiveDataHandler] Data was succesful inserted in database! You now registrated! \n ------------------------------------------------- \n ");
         } else {
             response = "Data not exist in database!";
-            System.out.println("Data not exist in database!");
-            System.out.println("Do you want to registrate? \n ---------------------------------------------------- \n ");
+            System.out.println("[receiveDataHandler] Data not exist in database!");
+            System.out.println("[receiveDataHandler] Do you want to registrate? \n ---------------------------------------------------- \n ");
         }
 
         // Отправляем ответ клиенту
@@ -135,7 +135,7 @@ public class receiveDataHandler implements HttpHandler {
                 dataINSEERT.executeUpdate();
 
                 answer = true;
-            } else System.out.println("Cannot connect to database!");
+            } else System.out.println("[receiveDataHandler] Cannot connect to database!");
             connection.close();
         } catch (SQLException e) {
             // Если возникло исключение, выводим сообщение об ошибке
@@ -146,7 +146,7 @@ public class receiveDataHandler implements HttpHandler {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    System.err.println("Issue with connection close: " + e.getMessage());
+                    System.err.println("[receiveDataHandler] Issue with connection close: " + e.getMessage());
                 }
             }
         }
@@ -155,7 +155,7 @@ public class receiveDataHandler implements HttpHandler {
     }
 
     private String fetchUserDataAndProcess(String login, String password) {
-        System.out.println("Finding data in database for login! \n --------------------------------------------- \n");
+        System.out.println("[receiveDataHandler] Finding data in database for login! \n --------------------------------------------- \n");
         // Параметры подключения к базе данных
         String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
         String dbUsername = "root";
@@ -190,11 +190,11 @@ public class receiveDataHandler implements HttpHandler {
 
                 switch (count) {
                     default: {
-                        System.out.println("More than 1 Login was matched!");
+                        System.out.println("[receiveDataHandler] More than 1 Login was matched!");
                         break;
                     }
                     case (1): {
-                        System.out.println("Login was suceful detected, and sent to manipulate");
+                        System.out.println("[receiveDataHandler] Login was suceful detected, and sent to manipulate");
                         resultSet.beforeFirst(); // Возвращаем курсор перед первой строкой
                         if (resultSet.next()) {
                             answerLogin = resultSet.getString("Login");
@@ -203,7 +203,7 @@ public class receiveDataHandler implements HttpHandler {
                         break;
                     }
                     case (0): {
-                        System.out.println("Login was not detacted in database");
+                        System.out.println("[receiveDataHandler] Login was not detacted in database");
                         break;
                     }
                 }
@@ -220,7 +220,7 @@ public class receiveDataHandler implements HttpHandler {
                 // Закрытие всех ресурсов
                 loginStatement.close();
                 resultSet.close();
-            } else System.out.println("Cannot connect to database!");
+            } else System.out.println("[receiveDataHandler] Cannot connect to database!");
             connection.close();
         } catch (SQLException e) {
             // Если возникло исключение, выводим сообщение об ошибке
@@ -231,7 +231,7 @@ public class receiveDataHandler implements HttpHandler {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    System.err.println("Ошибка при закрытии соединения: " + e.getMessage());
+                    System.err.println("[receiveDataHandler] Error while close connection: " + e.getMessage());
                 }
             }
         }

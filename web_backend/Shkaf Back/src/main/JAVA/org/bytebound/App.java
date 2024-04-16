@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpServer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.springframework.context.event.EventListener;
 
 
 public class App extends WebSocketServer {
@@ -15,11 +16,11 @@ public class App extends WebSocketServer {
     private ConnectionManager connectionManager;
     public static void main(String[] args) throws IOException {
         if (pingDatabase()) {
-            System.out.println("Database connection succesful!");
+            System.out.println("[App] Database connection succesful!");
 
             int httpPort = 8000;
             HttpServer httpServer = HttpServer.create(new InetSocketAddress(httpPort), 1);
-            System.out.println("Http server started on " + httpPort + " port");
+            System.out.println("[App] Http server started on " + httpPort + " port");
             httpServer.createContext("/receiveData", new receiveDataHandler());
             httpServer.createContext("/getDataForChat", new newChatCreation());
             httpServer.createContext("/takeAllChatsOfUserFromDataBase", new takeAllChatsOfUserFromDataBase());
@@ -29,9 +30,9 @@ public class App extends WebSocketServer {
             int socketPort = 8080;
             App webSocketServer = new App(socketPort);
             webSocketServer.start();
-            System.out.println("WebSocket server started on port " + socketPort);
+            System.out.println("[App] WebSocket server started on port " + socketPort);
         } else {
-            System.err.println("Error with database. Try to: \n - Check if it turned on. \n - If Data of database set right.");
+            System.err.println("[App] Error with database. Try to: \n - Check if it turned on. \n - If Data of database set right.");
         }
     }
 
@@ -43,39 +44,40 @@ public class App extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        System.out.println("New connection: " + conn.getRemoteSocketAddress());
+        System.out.println("[App] New connection: " + conn.getRemoteSocketAddress());
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        System.out.println("Closed connection: " + conn.getRemoteSocketAddress());
+        System.out.println("[App] Closed connection: " + conn.getRemoteSocketAddress());
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
         String resourceDescriptor = conn.getResourceDescriptor();
+        int id = findNickId(message);
 
         switch (resourceDescriptor) {
             case "/sendMessage":
                 messageHandler.handleMessage(message);
+                connectionManager.getUserConnection(id);
                 break;
             case "/login":
-                connectionManager.addUserConnection(findNickId(message), conn);
+                connectionManager.addUserConnection(id, conn);
                 break;
             default:
-                System.err.println("Error with web socket (void onMessage)");
+                System.err.println("[App] Error with web socket (void onMessage)");
                 break;
         }
     }
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        System.err.println("Error occurred on connection " + conn.getRemoteSocketAddress() + ": " + ex);
+        System.err.println("[App] Error occurred on connection " + conn.getRemoteSocketAddress() + ": " + ex);
     }
 
     @Override
     public void onStart() {}
-
 
     private int findNickId(String nick) {
         int answer = 0;
@@ -101,7 +103,7 @@ public class App extends WebSocketServer {
             e.printStackTrace();
         }
 
-        System.out.println(answer);
+        System.out.println("[App] Id for ConnectionManager was found -> " + answer);
         return answer;
     }
     private static boolean pingDatabase() {
@@ -136,14 +138,14 @@ public class App extends WebSocketServer {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    System.err.println("Error while connecting close: " + e.getMessage());
+                    System.err.println("[App] Error while connecting close: " + e.getMessage());
                 }
             }
         }
     }
 
     static {
-        System.out.println("\n \n \n Code was sucessfuly compiled! \n");
+        System.out.println("\n \n \n [App] Code was sucessfuly compiled! \n");
     }
 
 }

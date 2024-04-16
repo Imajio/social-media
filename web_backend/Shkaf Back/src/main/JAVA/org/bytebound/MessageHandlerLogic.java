@@ -7,7 +7,7 @@ import java.sql.*;
 public class MessageHandlerLogic implements MessageHandler {
     @Override
     public void handleMessage(String message) {
-        System.out.println("handleMessage -> " + message);
+        System.out.println("[MessageHandlerLogic] handleMessage -> " + message);
         String[] splitedDataOfBody = message.split(",");
 
         String nickOfSender = splitedDataOfBody[0].substring(1);
@@ -15,17 +15,26 @@ public class MessageHandlerLogic implements MessageHandler {
         String messageText = splitedDataOfBody[2];
         messageText = messageText.substring(0, messageText.length() - 1);
 
-        System.out.println(nickOfSender + "\n" + nickOfReceiver + "\n" + messageText + "\n");
+        System.out.println("[MessageHandlerLogic]\n" + nickOfSender + "\n" + nickOfReceiver + "\n" + messageText + "\n");
 
-        Timestamp response = null;
+        Timestamp timestamp = null;
+        ConnectionManager connectionManager = new ConnectionManager();
+        WebSocket webSocket = null;
 
-        insertMessageIntoDatabase(nickOfSender, nickOfReceiver, messageText);
-//        if (messageIdAfterAddingToDataBase != -1) {
-//            response = dataOfSentMessage(messageIdAfterAddingToDataBase);
-//            System.out.println("Data of sended message -> " + response);
-//        } else {
-//            System.err.println("Error with fetching data of message!");
-//        }
+        int messageIdAfterAddingToDataBase = insertMessageIntoDatabase(nickOfSender, nickOfReceiver, messageText);
+        if (messageIdAfterAddingToDataBase != -1) {
+            timestamp = dataOfSentMessage(messageIdAfterAddingToDataBase);
+            System.out.println("[MessageHandlerLogic] Time of sent message -> " + timestamp);
+            int idOfReceiver = findNickId(nickOfReceiver);
+            webSocket = connectionManager.getUserConnection(idOfReceiver);
+            webSocket.send(messageText);
+        } else {
+            System.err.println("[MessageHandlerLogic] Error with adding data to database!");
+        }
+    }
+
+    private void sendMessageToReceiver(String message, WebSocket conn) {
+
     }
 
     @Override
@@ -81,10 +90,10 @@ public class MessageHandlerLogic implements MessageHandler {
                 if (resultSet.next()) {
                     answer = resultSet.getInt(1);
                 } else {
-                    System.err.println("Error with take generated Id");
+                    System.err.println("[MessageHandlerLogic] Error with take generated Id");
                 }
             } else {
-                System.out.println("Issue with putting message to database!!");
+                System.out.println("[MessageHandlerLogic] Issue with putting message to database!!");
             }
 
         } catch(SQLException e) {
@@ -120,9 +129,5 @@ public class MessageHandlerLogic implements MessageHandler {
 
         System.out.println(answer);
         return answer;
-    }
-    @Override
-    public void sendMessageToReceiver(int receiverId, String message, WebSocket conn) {
-
     }
 }

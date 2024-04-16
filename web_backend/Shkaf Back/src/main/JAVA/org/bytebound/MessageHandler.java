@@ -12,5 +12,4 @@ public interface MessageHandler {
 
 //    int insertMessageIntoDatabase(String nickOfSender, String nickOfReceiver, String messageText);
 //    int findNickId(String nick);
-    void sendMessageToReceiver(int receiverId, String message, WebSocket conn);
 }

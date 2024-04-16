@@ -13,6 +13,8 @@ public class ConnectionManager {
     // Method for adding new connection
     public void addUserConnection(int userId, WebSocket conn) {
         userConnections.put(userId, conn);
+        System.out.println("[ConnectionManager] New user conn was added -> " + userId + " <---> " + conn.toString());
+        System.out.println("[ConnectionManager] All user connections -> " + userConnections);
     }
 
     // Method for taking userConnectiong depended on its ID

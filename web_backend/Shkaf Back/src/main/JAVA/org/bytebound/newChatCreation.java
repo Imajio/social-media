@@ -30,7 +30,7 @@ public class newChatCreation implements HttpHandler {
         String requestData = scanner.hasNext() ? scanner.next() : "";
         scanner.close();
 
-        System.out.println(" Request to create new chat between 2 users : " + requestData + " \n ------------------------------------------- \n ");
+        System.out.println("[newChatCreation] Request to create new chat between 2 users : " + requestData + " \n ------------------------------------------- \n ");
         String ifChat = insertDataInChatsTable(extractNamesFromAJAXRecuest(requestData));
         if (ifChat != null && ifChat.equals("Data was succesful puted to database!")) {
             response = "{ \"message\": \"Chat could be created!\" }";
@@ -52,7 +52,7 @@ public class newChatCreation implements HttpHandler {
     private String insertDataInChatsTable(String answerFromOtherTable) {
         if (answerFromOtherTable != null) {
             String answer = null;
-            System.out.println(" Both names exist, chat is going to be created!");
+            System.out.println("[newChatCreation] Both names exist, chat is going to be created!");
             String[] parts = answerFromOtherTable.split(",");
             Arrays.sort(parts);
             String firstNick = parts[0];
@@ -80,7 +80,7 @@ public class newChatCreation implements HttpHandler {
                     if (rowsAffected > 0) {
                         answer = "Data was succesful puted to database!";
                     } else {
-                        System.out.println("Issue with putting data in database!!");
+                        System.out.println("[newChatCreation] Issue with putting data in database!!");
                         answer = "Issue with putting data in database!!";
                     }
 
@@ -91,7 +91,7 @@ public class newChatCreation implements HttpHandler {
             }
             return answer;
         } else {
-            System.out.println("One or Both names aren\'t in database!");
+            System.out.println("[newChatCreation] One or Both names aren\'t in database!");
             return "One or Both names aren\'t in database!";
         }
     }
@@ -122,7 +122,7 @@ public class newChatCreation implements HttpHandler {
             if (resultSet.next()) {
                 answer = true;
             } else {
-                System.out.println("Data needed to be putted in db!!");
+                System.out.println("[newChatCreation] Data needed to be putted in db!!");
             }
 
         } catch (SQLException e) {
@@ -152,7 +152,7 @@ public class newChatCreation implements HttpHandler {
     }
 
     private String fetchUserDataAndProcess(String loginFirst, String loginSecond) {
-        System.out.println("Finding data in database for new chat! \n --------------------------------------------- \n");
+        System.out.println("[newChatCreation] Finding data in database for new chat! \n --------------------------------------------- \n");
 
         String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
         String dbUsername = "root";
@@ -187,11 +187,11 @@ public class newChatCreation implements HttpHandler {
 
             switch (count) {
                 default: {
-                    System.out.println("Some error with login 1");
+                    System.out.println("[newChatCreation] Some error with login 1");
                     break;
                 }
                 case (1): {
-                    System.out.println("Login 1 was detected in database");
+                    System.out.println("[newChatCreation] Login 1 was detected in database");
                     resultSetFirst.beforeFirst(); // Возвращаем курсор перед первой строкой
                     if (resultSetFirst.next()) {
                         isFirstExist = true;
@@ -199,7 +199,7 @@ public class newChatCreation implements HttpHandler {
                     break;
                 }
                 case (0): {
-                    System.out.println("Login 1 was not detected in database");
+                    System.out.println("[newChatCreation] Login 1 was not detected in database");
                     break;
                 }
             }
@@ -216,11 +216,11 @@ public class newChatCreation implements HttpHandler {
 
             switch (count) {
                 default: {
-                    System.out.println("Some error with login 2");
+                    System.out.println("[newChatCreation] Some error with login 2");
                     break;
                 }
                 case (1): {
-                    System.out.println("Login 2 was detected");
+                    System.out.println("[newChatCreation] Login 2 was detected");
                     resultSetSecond.beforeFirst(); // Возвращаем курсор перед первой строкой
                     if (resultSetSecond.next()) {
                         isSecondExist = true;
@@ -228,7 +228,7 @@ public class newChatCreation implements HttpHandler {
                     break;
                 }
                 case (0): {
-                    System.out.println("Login 2 was not detected in database");
+                    System.out.println("[newChatCreation] Login 2 was not detected in database");
                     break;
                 }
             }
@@ -252,7 +252,7 @@ public class newChatCreation implements HttpHandler {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    System.err.println("Issue with connection close: " + e.getMessage());
+                    System.err.println("[newChatCreation] Issue with connection close: " + e.getMessage());
                 }
             }
         }

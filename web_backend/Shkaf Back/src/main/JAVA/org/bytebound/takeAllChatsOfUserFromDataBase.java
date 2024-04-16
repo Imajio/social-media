@@ -30,7 +30,7 @@ public class takeAllChatsOfUserFromDataBase implements HttpHandler {
         Scanner scanner = new Scanner(requestBody, "UTF-8").useDelimiter("\\A");
         String nick = scanner.hasNext() ? scanner.next() : "";
         scanner.close();
-        System.out.println("Nick >>");
+        System.out.println("[takeAllChatsOfUserFromDataBase] Nick >>");
         System.out.println(nick);
 
         List<String> chats = loadAllChatsOfUser(nick);
@@ -42,8 +42,8 @@ public class takeAllChatsOfUserFromDataBase implements HttpHandler {
         StringBuilder finalResponse = new StringBuilder();
         finalResponse.append("{").append(response.deleteCharAt(response.length()-1)).append("}");
 
-        System.out.println("Final Response >>");
-        System.out.println(finalResponse);
+        System.out.println("[takeAllChatsOfUserFromDataBase] Final Response >>");
+        System.out.println("[takeAllChatsOfUserFromDataBase] " + finalResponse);
 
         // Отправка ответа клиенту
         exchange.sendResponseHeaders(200, finalResponse.toString().getBytes().length);
