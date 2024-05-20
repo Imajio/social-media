@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class takeAllChatsOfUserFromDataBase implements HttpHandler {
+    private DatabaseData databaseData = new DatabaseData();
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -55,14 +56,10 @@ public class takeAllChatsOfUserFromDataBase implements HttpHandler {
     private List<String> loadAllChatsOfUser(String nick) {
         List<String> chats = new ArrayList<>();
 
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
-        String dbUsername = "root";
-        String dbPassword = "";
-
         String whichChatsExist = "SELECT NickFirst, NickSecond FROM chats WHERE NickFirst = '" + nick + "' OR NickSecond = '" + nick + "';";
 
         try (
-                Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+                Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(),databaseData.getDbUsername(), databaseData.getDbPassword());
                 PreparedStatement preparedStatement = connection.prepareStatement(whichChatsExist, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
         ) {
             ResultSet resultSet = preparedStatement.executeQuery();

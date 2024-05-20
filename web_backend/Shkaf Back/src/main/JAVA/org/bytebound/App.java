@@ -3,17 +3,23 @@ package org.bytebound;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import com.sun.net.httpserver.HttpServer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.springframework.context.event.EventListener;
+import org.jetbrains.annotations.NotNull;
 
 
 public class App extends WebSocketServer {
+    private DatabaseData databaseData = new DatabaseData();
     private MessageHandler messageHandler;
     private ConnectionManager connectionManager;
+    private loadMessagesOfTheChatLogic loadMessagesOfTheChatLogic;
     public static void main(String[] args) throws IOException {
         if (pingDatabase()) {
             System.out.println("[App] Database connection succesful!");
@@ -40,6 +46,7 @@ public class App extends WebSocketServer {
         super(new InetSocketAddress(port));
         this.messageHandler = new MessageHandlerLogic();
         this.connectionManager = new ConnectionManager();
+        this.loadMessagesOfTheChatLogic = new loadMessagesOfTheChatLogic();
     }
 
     @Override
@@ -50,21 +57,31 @@ public class App extends WebSocketServer {
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         System.out.println("[App] Closed connection: " + conn.getRemoteSocketAddress());
+        String resourceDescriptor = conn.getResourceDescriptor();
+        if (resourceDescriptor.equals("/login")) {
+            connectionManager.removeUserConnection(conn);
+        }
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
+        System.out.println("[App] -> |onMessage| " + message);
         String resourceDescriptor = conn.getResourceDescriptor();
-        int id = findNickId(message);
 
         switch (resourceDescriptor) {
-            case "/sendMessage":
+            case "/sendMessage": {
+                int id = findNickId(message.split(",")[0]);
                 messageHandler.handleMessage(message);
                 connectionManager.getUserConnection(id);
                 break;
-            case "/login":
-                connectionManager.addUserConnection(id, conn);
+            }
+            case "/login": {
+                int id_sender = findNickId(message.split(",")[0]);
+                int id_receiver = findNickId(message.split(",")[1]);
+                connectionManager.addUserConnection(id_sender, conn);
+                conn.send(loadMessagesOfTheChatLogic.lastMessages(10, id_sender , id_receiver).toString());
                 break;
+            }
             default:
                 System.err.println("[App] Error with web socket (void onMessage)");
                 break;
@@ -81,13 +98,10 @@ public class App extends WebSocketServer {
 
     private int findNickId(String nick) {
         int answer = 0;
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
-        String dbUsername = "root";
-        String dbPassword = "";
         String sqlQuery = "SELECT Id FROM users WHERE Login = ?;";
 
         try (
-                Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+                Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(),databaseData.getDbUsername(), databaseData.getDbPassword());
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
         ) {
 
@@ -108,7 +122,7 @@ public class App extends WebSocketServer {
     }
     private static boolean pingDatabase() {
         // Параметры подключения к базе данных
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
+        String jdbcUrl = "jdbc:mysql://localhost:3306/shkafdatabase";
         String dbUsername = "root";
         String dbPassword = "";
 

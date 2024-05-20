@@ -3,6 +3,7 @@ package org.bytebound;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -13,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class receiveDataHandler implements HttpHandler {
-
+    private DatabaseData databaseData = new DatabaseData();
     static String login;
     static String password;
     static String hashedpassword;
@@ -111,21 +112,14 @@ public class receiveDataHandler implements HttpHandler {
     }
 
     private boolean insertUserDataInDataBase(String login, String password) {
-        // Параметры подключения к базе данных
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
-        String dbUsername = "root";
-        String dbPassword = "";
-
         boolean answer = false;
 
         //SQL-запрос на вставку данных
         String insertData = "INSERT INTO users (Login, Password) VALUES ('" + login + "', '" + password + "');";
 
-        Connection connection = null;
-
         try {
             // Установка соединения с базой данных
-            connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+            Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(),databaseData.getDbUsername(), databaseData.getDbPassword());
 
             boolean isValid = connection.isValid(1);
 
@@ -140,15 +134,6 @@ public class receiveDataHandler implements HttpHandler {
         } catch (SQLException e) {
             // Если возникло исключение, выводим сообщение об ошибке
             e.printStackTrace();
-        } finally {
-            // Важно закрыть соединение после использования
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    System.err.println("[receiveDataHandler] Issue with connection close: " + e.getMessage());
-                }
-            }
         }
 
         return answer;
@@ -157,7 +142,7 @@ public class receiveDataHandler implements HttpHandler {
     private String fetchUserDataAndProcess(String login, String password) {
         System.out.println("[receiveDataHandler] Finding data in database for login! \n --------------------------------------------- \n");
         // Параметры подключения к базе данных
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
+        String jdbcUrl = "jdbc:mysql://localhost:3306/shkafdatabase";
         String dbUsername = "root";
         String dbPassword = "";
 

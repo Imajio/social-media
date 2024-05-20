@@ -16,14 +16,18 @@ public class ConnectionManager {
         System.out.println("[ConnectionManager] New user conn was added -> " + userId + " <---> " + conn.toString());
         System.out.println("[ConnectionManager] All user connections -> " + userConnections);
     }
-
-    // Method for taking userConnectiong depended on its ID
     public WebSocket getUserConnection(int userId) {
         return userConnections.get(userId);
     }
-    // Method fo deleting connection
-    public void removeUserConnection(int userId) {
-        userConnections.remove(userId);
+    public void removeUserConnection(WebSocket userConn) {
+        for (Map.Entry<Integer, WebSocket> entry : userConnections.entrySet()) {
+            if (entry.getValue().equals(userConn)) {
+                userConnections.remove(entry.getKey());
+                System.out.println("[ConnectionManager] User conn removed -> " + entry.getKey());
+                break;
+            }
+        }
     }
+
 
 }

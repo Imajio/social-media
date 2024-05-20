@@ -5,6 +5,7 @@ import org.java_websocket.WebSocket;
 import java.sql.*;
 
 public class MessageHandlerLogic implements MessageHandler {
+    private DatabaseData databaseData = new DatabaseData();
     @Override
     public void handleMessage(String message) {
         System.out.println("[MessageHandlerLogic] handleMessage -> " + message);
@@ -27,7 +28,11 @@ public class MessageHandlerLogic implements MessageHandler {
             System.out.println("[MessageHandlerLogic] Time of sent message -> " + timestamp);
             int idOfReceiver = findNickId(nickOfReceiver);
             webSocket = connectionManager.getUserConnection(idOfReceiver);
-            webSocket.send(messageText);
+            if (webSocket != null) {
+                webSocket.send(messageText);
+            } else {
+                System.err.println("[MessageHandlerLogic] WebSocket to send data is null");
+            }
         } else {
             System.err.println("[MessageHandlerLogic] Error with adding data to database!");
         }
@@ -40,13 +45,10 @@ public class MessageHandlerLogic implements MessageHandler {
     @Override
     public Timestamp dataOfSentMessage(int messageId) {
         Timestamp answer = null;
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
-        String dbUsername = "root";
-        String dbPassword = "";
         String sqlQuery = "SELECT Timestamp FROM messages WHERE message_id = ?;";
 
         try (
-                Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+                Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(),databaseData.getDbUsername(), databaseData.getDbPassword());
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
         ) {
 
@@ -67,7 +69,7 @@ public class MessageHandlerLogic implements MessageHandler {
 
     private int insertMessageIntoDatabase(String nickOfSender, String nickOfReceiver, String messageText) {
         int answer = -1;
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
+        String jdbcUrl = "jdbc:mysql://localhost:3306/shkafdatabase";
         String dbUsername = "root";
         String dbPassword = "";
         String sqlQuery = "INSERT INTO messages(sender_id, receiver_id, message_text) VALUES (?, ? ,?);";
@@ -105,7 +107,7 @@ public class MessageHandlerLogic implements MessageHandler {
 
     private int findNickId(String nick) {
         int answer = 0;
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
+        String jdbcUrl = "jdbc:mysql://localhost:3306/shkafdatabase";
         String dbUsername = "root";
         String dbPassword = "";
         String sqlQuery = "SELECT Id FROM users WHERE Login = ?;";

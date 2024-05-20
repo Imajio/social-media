@@ -268,6 +268,10 @@ function openChatFunction(nickOnHeader) {
         hero.appendChild(messagesArea);
         document.querySelector('.background').style.filter = 'brightness(0.55)';
     } else {
+        // Clear block with messages
+        const messagesArea = document.querySelector('.messages-area');
+        messagesArea.innerHTML = '';
+
         //TCP Connection with server
         socket.close();
         socketLogin.close();
@@ -343,7 +347,7 @@ function onChatOpenSocketDataTransfer() {
 
     socketLogin.addEventListener('open', function(event) {      
         let nickname = getCookie("nickname");                   
-        socketLogin.send(nickname);                             
+        socketLogin.send(nickname + "," + document.querySelector(".chatPlaceWithMessagesHeaderParagraf"));                             
     });                                                         
                                                             
     socketLogin.addEventListener('error', function(event) {     

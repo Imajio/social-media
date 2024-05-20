@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class newChatCreation implements HttpHandler {
+    private DatabaseData databaseData = new DatabaseData();
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -59,7 +60,7 @@ public class newChatCreation implements HttpHandler {
             String secondNick = parts[1];
 
             //Database данные
-            String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
+            String jdbcUrl = "jdbc:mysql://localhost:3306/shkafdatabase";
             String dbUsername = "root";
             String dbPassword = "";
 
@@ -98,10 +99,6 @@ public class newChatCreation implements HttpHandler {
 
     private boolean ifDataOfChatInDatabaseExist(String firstNick, String secondNick) {
         boolean answer = false;
-        //Database данные
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
-        String dbUsername = "root";
-        String dbPassword = "";
 
         //SQL-запрос на вставку данных
         String ifDataExist = "SELECT * FROM chats WHERE NickFirst = ? AND NickSecond = ?;";
@@ -109,7 +106,7 @@ public class newChatCreation implements HttpHandler {
         int i = 0;
 
         try (
-                Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+                Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(),databaseData.getDbUsername(), databaseData.getDbPassword());
                 PreparedStatement preparedStatement = connection.prepareStatement(ifDataExist, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ) {
             preparedStatement.setString(1, firstNick);
@@ -154,10 +151,6 @@ public class newChatCreation implements HttpHandler {
     private String fetchUserDataAndProcess(String loginFirst, String loginSecond) {
         System.out.println("[newChatCreation] Finding data in database for new chat! \n --------------------------------------------- \n");
 
-        String jdbcUrl = "jdbc:mysql://localhost:3306/shkaf database";
-        String dbUsername = "root";
-        String dbPassword = "";
-
         // Инициализация переменных для ответа
         String answerNickname = null;
 
@@ -165,10 +158,8 @@ public class newChatCreation implements HttpHandler {
         String selectLoginFirst = "SELECT * FROM users WHERE users.Login=\'" + loginFirst + "\';";
         String selectLoginSecond = "SELECT * FROM users WHERE users.Login=\'" + loginSecond + "\';";
 
-        Connection connection = null;
-
         try {
-            connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+            Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(),databaseData.getDbUsername(), databaseData.getDbPassword());
 
             // Если мы дошли до этой точки без исключения, подключение прошло успешно
 
@@ -246,15 +237,6 @@ public class newChatCreation implements HttpHandler {
             // Если возникло исключение, выводим сообщение об ошибке
             e.printStackTrace();
             answerNickname = "Failed to connect to database";
-        } finally {
-            // Важно закрыть соединение после использования
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    System.err.println("[newChatCreation] Issue with connection close: " + e.getMessage());
-                }
-            }
         }
         return answerNickname;
     }
