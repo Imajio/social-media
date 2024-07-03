@@ -6,33 +6,33 @@ import java.util.List;
 
 public class loadMessagesOfTheChatLogic {
     private DatabaseData databaseData = new DatabaseData();
-    public List<String> lastMessages(int count,int firstUserId,int secondUserId) {
+
+    public List<String> lastMessages(int count, int firstUserId, int secondUserId) {
+        System.out.println("[loadMessagesOfTheChatLogic] First id -> " + firstUserId + " Second id ->" + secondUserId);
         List<String> answer = new ArrayList<>();
 
-        String searchMessages = "SELECT * FROM messages WHERE (sender_id = ? OR sender_id = ?) AND " +
-                "(receiver_id = ? OR receiver_id = ?) ORDER BY Timestamp DESC LIMIT ?;";
+        String searchMessages = "SELECT message_text FROM messages WHERE sender_id = ? AND receiver_id = ? ORDER BY Timestamp DESC LIMIT ?;";
 
         try (
-                Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(),databaseData.getDbUsername(), databaseData.getDbPassword());
+                Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(), databaseData.getDbUsername(), databaseData.getDbPassword());
                 PreparedStatement preparedStatement = connection.prepareStatement(searchMessages, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                )
-        {
+        ) {
             preparedStatement.setInt(1, firstUserId);
             preparedStatement.setInt(2, secondUserId);
-            preparedStatement.setInt(3, secondUserId);
-            preparedStatement.setInt(4, firstUserId);
-            preparedStatement.setInt(5, count);
+            preparedStatement.setInt(3, count);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            System.out.println("[loadMessagesOfTheChatLogic]" + resultSet.getArray("message_text"));
-            resultSet.beforeFirst();
             while (resultSet.next()) {
-                answer.add(resultSet.getString("message_text"));
+                answer.add(resultSet.toString());
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            answer.add("Error");
+            answer.add("[loadMessagesOfTheChatLogic] Error");
+        }
+
+        if (answer.isEmpty()) {
+            answer.add("[loadMessagesOfTheChatLogic] No messages yet");
         }
 
         System.out.println("[loadMessagesOfTheChatLogic] " + answer);

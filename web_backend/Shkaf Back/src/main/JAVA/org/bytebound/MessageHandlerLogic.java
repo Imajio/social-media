@@ -7,8 +7,8 @@ import java.sql.*;
 public class MessageHandlerLogic implements MessageHandler {
     private DatabaseData databaseData = new DatabaseData();
     @Override
-    public void handleMessage(String message) {
-        System.out.println("[MessageHandlerLogic] handleMessage -> " + message);
+    public void handleMessage(String message, WebSocket conn) {
+        System.out.println("[MessageHandlerLogic] handleMessage -> " + message + " -> " + conn);
         String[] splitedDataOfBody = message.split(",");
 
         String nickOfSender = splitedDataOfBody[0].substring(1);
@@ -16,30 +16,23 @@ public class MessageHandlerLogic implements MessageHandler {
         String messageText = splitedDataOfBody[2];
         messageText = messageText.substring(0, messageText.length() - 1);
 
-        System.out.println("[MessageHandlerLogic]\n" + nickOfSender + "\n" + nickOfReceiver + "\n" + messageText + "\n");
+        System.out.println("[MessageHandlerLogic] " + nickOfSender + " " + nickOfReceiver + " " + messageText + "\n");
+
+        if (conn != null) {
+            conn.send(messageText);
+        } else {
+            System.err.println("[MessageHandlerLogic] WebSocket to send data is null");
+        }
 
         Timestamp timestamp = null;
-        ConnectionManager connectionManager = new ConnectionManager();
-        WebSocket webSocket = null;
 
         int messageIdAfterAddingToDataBase = insertMessageIntoDatabase(nickOfSender, nickOfReceiver, messageText);
         if (messageIdAfterAddingToDataBase != -1) {
             timestamp = dataOfSentMessage(messageIdAfterAddingToDataBase);
             System.out.println("[MessageHandlerLogic] Time of sent message -> " + timestamp);
-            int idOfReceiver = findNickId(nickOfReceiver);
-            webSocket = connectionManager.getUserConnection(idOfReceiver);
-            if (webSocket != null) {
-                webSocket.send(messageText);
-            } else {
-                System.err.println("[MessageHandlerLogic] WebSocket to send data is null");
-            }
         } else {
             System.err.println("[MessageHandlerLogic] Error with adding data to database!");
         }
-    }
-
-    private void sendMessageToReceiver(String message, WebSocket conn) {
-
     }
 
     @Override
@@ -78,10 +71,8 @@ public class MessageHandlerLogic implements MessageHandler {
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
         ) {
 
-            int idOfReceiver = findNickId(nickOfReceiver);
-
             preparedStatement.setInt(1,findNickId(nickOfSender));
-            preparedStatement.setInt(2,idOfReceiver);
+            preparedStatement.setInt(2,findNickId(nickOfReceiver));
             preparedStatement.setString(3,messageText);
 
             int rowsAffected = preparedStatement.executeUpdate();
@@ -129,7 +120,7 @@ public class MessageHandlerLogic implements MessageHandler {
             e.printStackTrace();
         }
 
-        System.out.println(answer);
+        System.out.println("[MessageHandlerLogic] -> Id for User " + nick + " ->" + answer);
         return answer;
     }
 }

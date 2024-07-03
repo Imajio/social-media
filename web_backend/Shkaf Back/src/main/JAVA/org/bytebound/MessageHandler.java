@@ -1,15 +1,9 @@
 package org.bytebound;
 
-//import org.java_websocket.WebSocket;
-
 import org.java_websocket.WebSocket;
-
 import java.sql.Timestamp;
 
 public interface MessageHandler {
-    void handleMessage(String message);
+    void handleMessage(String message, WebSocket conn);
     Timestamp dataOfSentMessage(int messageId);
-
-//    int insertMessageIntoDatabase(String nickOfSender, String nickOfReceiver, String messageText);
-//    int findNickId(String nick);
 }

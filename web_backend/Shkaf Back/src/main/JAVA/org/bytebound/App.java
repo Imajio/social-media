@@ -3,17 +3,11 @@ package org.bytebound;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.*;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 import com.sun.net.httpserver.HttpServer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.jetbrains.annotations.NotNull;
-
 
 public class App extends WebSocketServer {
     private DatabaseData databaseData = new DatabaseData();
@@ -48,7 +42,6 @@ public class App extends WebSocketServer {
         this.connectionManager = new ConnectionManager();
         this.loadMessagesOfTheChatLogic = new loadMessagesOfTheChatLogic();
     }
-
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         System.out.println("[App] New connection: " + conn.getRemoteSocketAddress());
@@ -57,30 +50,25 @@ public class App extends WebSocketServer {
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         System.out.println("[App] Closed connection: " + conn.getRemoteSocketAddress());
-        String resourceDescriptor = conn.getResourceDescriptor();
-        if (resourceDescriptor.equals("/login")) {
-            connectionManager.removeUserConnection(conn);
-        }
+        connectionManager.removeUserConnection(conn);
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
         System.out.println("[App] -> |onMessage| " + message);
         String resourceDescriptor = conn.getResourceDescriptor();
-
         switch (resourceDescriptor) {
             case "/sendMessage": {
-                int id = findNickId(message.split(",")[0]);
-                messageHandler.handleMessage(message);
-                connectionManager.getUserConnection(id);
-                break;
-            }
-            case "/login": {
-                int id_sender = findNickId(message.split(",")[0]);
-                int id_receiver = findNickId(message.split(",")[1]);
-                connectionManager.addUserConnection(id_sender, conn);
-                conn.send(loadMessagesOfTheChatLogic.lastMessages(10, id_sender , id_receiver).toString());
-                break;
+                System.out.println("[App] /sendMessage");
+                if (message.split(",").length == 2) {
+                    int id_sender = findNickId(message.split(",")[0]);
+                    connectionManager.addUserConnection(id_sender, conn);
+                    break;
+                } else if (message.split(",").length == 3) {
+                    WebSocket receiverSocket = connectionManager.getUserConnection(findNickId(message.split(",")[1]));
+                    messageHandler.handleMessage(message, receiverSocket);
+                    break;
+                }
             }
             default:
                 System.err.println("[App] Error with web socket (void onMessage)");
@@ -116,8 +104,11 @@ public class App extends WebSocketServer {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        System.out.println("[App] Id for ConnectionManager was found -> " + answer);
+        if (answer != 0) {
+            System.out.println("[App] Id for user " + nick + " was found -> " + answer);
+        } else {
+            System.err.println("[App] Id for user " + nick + " wasn't found!");
+        }
         return answer;
     }
     private static boolean pingDatabase() {

@@ -8,8 +8,6 @@ let i = 0;
 let addchatbutton = document.querySelector("#addchatbutton");
 
 //WEB SOCKET////////////////////////////////////////////////////////////////////////////
-let webSocketOnOpenAdress = null;
-let socketLogin = null;
 let webSocketAdress = null;
 let socket = null;
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -224,7 +222,6 @@ function openChatFunction(nickOnHeader) {
 
     if (!ifChatAllreadyOpened) {
         //TCP Connection with server
-        onChatOpenSocket();
         onChatOpenSocketDataTransfer();
 
         let lastActivity = "last activity";
@@ -274,8 +271,6 @@ function openChatFunction(nickOnHeader) {
 
         //TCP Connection with server
         socket.close();
-        socketLogin.close();
-        onChatOpenSocket();
         onChatOpenSocketDataTransfer();
 
         let lastActivity = "last activity";
@@ -340,38 +335,25 @@ function addMessageOfReceiver(message) {
     messagesArea.appendChild(strangerMessageArea);
 }
 
-// When the login socket is opened, send the user's nickname//
+// WebSocket to take and send messages //
 function onChatOpenSocketDataTransfer() {
-    webSocketOnOpenAdress = "ws://localhost:8080/login";
-    socketLogin = new WebSocket(webSocketOnOpenAdress);
-
-    socketLogin.addEventListener('open', function(event) {      
-        let nickname = getCookie("nickname");                   
-        socketLogin.send(nickname + "," + document.querySelector(".chatPlaceWithMessagesHeaderParagraf"));                             
-    });                                                         
-                                                            
-    socketLogin.addEventListener('error', function(event) {     
-        console.error('Web Socket login error: ' + event);      
-    });
-}                                                         
-//////////////////////////////////////////////////////////////
-
-//Send data with Web Socket to database
-function onChatOpenSocket() {
     webSocketAdress = "ws://localhost:8080/sendMessage";
     socket = new WebSocket(webSocketAdress);
 
-    socket.addEventListener('open', function(event){
-
-    });
-
-    socket.addEventListener('message', function(event) {
+    socket.addEventListener('open', function(event) {      
+        let nickname = getCookie("nickname");                   
+        socket.send(nickname + "," + document.querySelector(".chatPlaceWithMessagesHeaderParagraf").textContent);                             
+        console.log("Data sent to sever onLogin Socket -> " + nickname + "," + document.querySelector(".chatPlaceWithMessagesHeaderParagraf").textContent);                             
+    });                             
+    
+    socket.addEventListener('message', (event) => {
         let receivedData = event.data;
-        console.log('Received data from server:', receivedData);
+        console.log('[/sendMessage] Received data from server:', receivedData);
+        addMessageOfReceiver(receivedData);
     });
-
-    socket.addEventListener('error', function(event) {
-        console.error('WebSocket error:', event);
+                                                            
+    socket.addEventListener('error', function(event) {     
+        console.error('[/sendMessage] Web Socket login error: ' + event);      
     });
-}
-//////////////////////////////////////////////////////////
+}                                                         
+//////////////////////////////////////////////////////////////
