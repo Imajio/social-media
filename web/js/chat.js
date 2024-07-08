@@ -15,7 +15,7 @@ let socket = null;
 //Cookie////////////////////////////////////////////////////////////////////////////////
 
 function setCookie(cookieName, cookieValue) {
-    document.cookie = cookieName + "=" + cookieValue + ";path=/"
+    document.cookie = cookieName + "=" + cookieValue + ";path=/";
 }
 
 function deleteCookie(name) {
@@ -32,6 +32,10 @@ function getCookie(name) {
     }
     return null;
 }
+
+window.addEventListener('close', () => {
+    document.cookie = "path/";
+});
 
 //////////////////////////////////////////////////////////////////////////////////
 //If nick ok to open new chat
@@ -295,7 +299,13 @@ function onPressSendMessageButton(nickofreceiver) {
     let message = document.querySelector('#inputForMessageOnFooterOfChat').value;
 
     if (message && message != "" && message != null) {
+        createOwnMessage(message);
+        sendMessageToServer(getCookie("nickname") + "," + nickofreceiver + "," + message);
+    }
+}
 
+function createOwnMessage(message) {
+    if (message && message != "" && message != null) {
         const ownMessageArea = document.createElement('div');
         ownMessageArea.classList.add('own-message-area');
 
@@ -310,8 +320,6 @@ function onPressSendMessageButton(nickofreceiver) {
 
         //clearing message input
         document.querySelector('#inputForMessageOnFooterOfChat').value = null;
-
-        sendMessageToServer(getCookie("nickname") + "," + nickofreceiver + "," + message);
     }
 }
 
@@ -348,8 +356,33 @@ function onChatOpenSocketDataTransfer() {
     
     socket.addEventListener('message', (event) => {
         let receivedData = event.data;
-        console.log('[/sendMessage] Received data from server:', receivedData);
-        addMessageOfReceiver(receivedData);
+        receivedData.substring(0, receivedData.length - 1);
+        let messagesArray = receivedData.split("|");
+        switch(messagesArray[0]) {
+            case("message"): {
+                addMessageOfReceiver(messagesArray[1]);
+                break;
+            }
+            case("ih"): {
+                setCookie("ih", messagesArray[1]);
+                break;
+            }
+            case("um"): {
+                messagesArray.shift();
+                messagesArray.forEach(msg => {
+                    let msgS = msg.split(",");
+                    if (msgS[0] === getCookie("ih")) {
+                        createOwnMessage(msgS[1]);
+                    } else {
+                        addMessageOfReceiver(msgS[1]);
+                    }
+                });
+                break;
+            }
+            default: {
+                break;
+            }
+        }
     });
                                                             
     socket.addEventListener('error', function(event) {     

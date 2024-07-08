@@ -3,6 +3,7 @@ package org.bytebound;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.*;
+import java.util.List;
 
 import com.sun.net.httpserver.HttpServer;
 import org.java_websocket.WebSocket;
@@ -62,11 +63,26 @@ public class App extends WebSocketServer {
                 System.out.println("[App] /sendMessage");
                 if (message.split(",").length == 2) {
                     int id_sender = findNickId(message.split(",")[0]);
+                    SHA256Hash sha256Hash = new SHA256Hash();
+                    conn.send("ih|" + id_sender);
+                    int id_receiver = findNickId(message.split(",")[1]);
+                    List<String> tenLastUsersMessages = loadMessagesOfTheChatLogic.lastMessages(10, id_sender, id_receiver);
+                    StringBuilder tenLastUsersMessagesSB = new StringBuilder();
+
+                    for (String msg : tenLastUsersMessages) {
+                        tenLastUsersMessagesSB.append(msg).append("|");
+                    }
+
+                    conn.send("um|" + tenLastUsersMessagesSB);
+
                     connectionManager.addUserConnection(id_sender, conn);
+
                     break;
                 } else if (message.split(",").length == 3) {
+
                     WebSocket receiverSocket = connectionManager.getUserConnection(findNickId(message.split(",")[1]));
                     messageHandler.handleMessage(message, receiverSocket);
+
                     break;
                 }
             }

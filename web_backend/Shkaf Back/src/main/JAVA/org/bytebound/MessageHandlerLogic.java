@@ -19,7 +19,7 @@ public class MessageHandlerLogic implements MessageHandler {
         System.out.println("[MessageHandlerLogic] " + nickOfSender + " " + nickOfReceiver + " " + messageText + "\n");
 
         if (conn != null) {
-            conn.send(messageText);
+            conn.send("message|" + messageText);
         } else {
             System.err.println("[MessageHandlerLogic] WebSocket to send data is null");
         }
