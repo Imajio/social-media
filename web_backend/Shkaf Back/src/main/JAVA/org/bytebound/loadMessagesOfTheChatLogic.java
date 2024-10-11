@@ -11,7 +11,7 @@ public class loadMessagesOfTheChatLogic {
         System.out.println("[loadMessagesOfTheChatLogic] First id -> " + firstUserId + " Second id ->" + secondUserId);
         List<String> answer = new ArrayList<>();
 
-        String searchMessages = "SELECT message_text,sender_id FROM messages WHERE (sender_id = ? AND receiver_id = ? ) OR (sender_id=? AND receiver_id=?) ORDER BY Timestamp DESC LIMIT ?;";
+        String searchMessages = "SELECT message_text,sender_id FROM messages WHERE (sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?) ORDER BY Timestamp DESC LIMIT ?;";
 
         try (
                 Connection connection = DriverManager.getConnection(databaseData.getJdbcUrl(), databaseData.getDbUsername(), databaseData.getDbPassword());

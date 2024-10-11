@@ -73,7 +73,9 @@ public class App extends WebSocketServer {
                         tenLastUsersMessagesSB.append(msg).append("|");
                     }
 
-                    conn.send("um|" + tenLastUsersMessagesSB);
+                    String s = tenLastUsersMessagesSB.substring(0, tenLastUsersMessagesSB.length()-1);
+
+                    conn.send("um|" + s);
 
                     connectionManager.addUserConnection(id_sender, conn);
 

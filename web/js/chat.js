@@ -195,12 +195,6 @@ function addChatToChatsPeople(avatarSrc, nicknameOfChat, lastMessage) {
     let chatsPeople = document.querySelector('.chatsPeople');
     chatsPeople.appendChild(newChat);
 }
-//News on aside menu////////////////////////////////////////
-function showNews(newsCount) {
-    if (newsCount !== "none") {
-
-    }
-}
 
 //Load all chats
 fetch('http://localhost:8000/takeAllChatsOfUserFromDataBase', {
@@ -222,7 +216,7 @@ fetch('http://localhost:8000/takeAllChatsOfUserFromDataBase', {
 ////////////////////////////////////
 //UI of opened chat///////////////////////////////////////////////
 function openChatFunction(nickOnHeader) {
-    let ifChatAllreadyOpened = document.querySelector('.chatPlaceWithMessages');
+let ifChatAllreadyOpened = document.querySelector('.chatPlaceWithMessages');
 
     if (!ifChatAllreadyOpened) {
         //TCP Connection with server
@@ -304,6 +298,16 @@ function onPressSendMessageButton(nickofreceiver) {
     }
 }
 
+document.addEventListener('keydown', function(event) {
+    if (event.key === "Enter") {
+        const textValue = document.querySelector("#inputForMessageOnFooterOfChat");
+        if(textValue&&textValue!=null&&textValue!=""){
+            onPressSendMessageButton(document.querySelector(".chatPlaceWithMessagesHeaderParagraf"));
+        }
+    }
+});
+
+
 function createOwnMessage(message) {
     if (message && message != "" && message != null) {
         const ownMessageArea = document.createElement('div');
@@ -356,7 +360,7 @@ function onChatOpenSocketDataTransfer() {
     
     socket.addEventListener('message', (event) => {
         let receivedData = event.data;
-        receivedData.substring(0, receivedData.length - 1);
+        console.log(receivedData);
         let messagesArray = receivedData.split("|");
         switch(messagesArray[0]) {
             case("message"): {
@@ -369,9 +373,10 @@ function onChatOpenSocketDataTransfer() {
             }
             case("um"): {
                 messagesArray.shift();
+                messagesArray.reverse();
                 messagesArray.forEach(msg => {
                     let msgS = msg.split(",");
-                    if (msgS[0] === getCookie("ih")) {
+                    if (msgS[0] === getCookie("ih") && msgS[1] !== undefined) {
                         createOwnMessage(msgS[1]);
                     } else {
                         addMessageOfReceiver(msgS[1]);
