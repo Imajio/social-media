@@ -302,7 +302,7 @@ document.addEventListener('keydown', function(event) {
     if (event.key === "Enter") {
         const textValue = document.querySelector("#inputForMessageOnFooterOfChat");
         if(textValue&&textValue!=null&&textValue!=""){
-            onPressSendMessageButton(document.querySelector(".chatPlaceWithMessagesHeaderParagraf"));
+            onPressSendMessageButton(document.querySelector(".chatPlaceWithMessagesHeaderParagraf").textContent);
         }
     }
 });
